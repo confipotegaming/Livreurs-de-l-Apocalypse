@@ -14,24 +14,36 @@ import { GameRoom } from "./rooms/GameRoom.js";
 
 // Render impose le port via la variable PORT. En local, on prend 2567.
 const PORT = Number(process.env.PORT) || 2567;
+/** Lancé avec "npm run dev" (fichier .ts exécuté par tsx) : le jeu est alors servi par Vite. */
+const isDev = import.meta.url.endsWith(".ts");
+/** Version en ligne = commit Git déployé (Render fournit RENDER_GIT_COMMIT). */
+const VERSION = process.env.RENDER_GIT_COMMIT?.slice(0, 7) ?? "locale";
 
 const app = express();
 // Compresse les fichiers envoyés (le jeu passe d'environ 5 Mo à moins de 2 Mo à télécharger).
 app.use(compression());
 
 // Petite page de santé : Render l'appelle pour vérifier que le serveur répond.
+// On peut l'ouvrir dans le navigateur pour vérifier quelle version est en ligne.
 app.get("/health", (_req, res) => {
-  res.json({ ok: true });
+  res.json({ ok: true, version: VERSION });
 });
 
 // Les fichiers du jeu compilés par "npm run build".
 const clientDir = path.join(process.cwd(), "dist", "client");
 const indexHtml = path.join(clientDir, "index.html");
-if (fs.existsSync(indexHtml)) {
+if (isDev) {
+  // En développement, un vieux dossier dist/ (ancien build) pourrait traîner : on ne le sert
+  // surtout pas, sinon on joue à une ancienne version sans s'en rendre compte. On redirige vers Vite.
+  app.get("/", (_req, res) => {
+    res.redirect("http://localhost:5173/");
+  });
+} else if (fs.existsSync(indexHtml)) {
   app.use(express.static(clientDir));
   // Toute autre adresse (ex. /?salon=ABCD) renvoie la page du jeu.
+  // Sauf un fichier introuvable (ex. /models/absent.glb) : vraie erreur 404, plus claire à diagnostiquer.
   app.use((req, res, next) => {
-    if (req.method !== "GET") return next();
+    if (req.method !== "GET" || path.extname(req.path)) return next();
     res.sendFile(indexHtml);
   });
 } else {
@@ -49,8 +61,6 @@ const gameServer = new Server({
 gameServer.define(ROOM_NAME, GameRoom);
 
 gameServer.listen(PORT).then(() => {
-  console.log(`🍕 Livreurs de l'Apocalypse : serveur prêt sur le port ${PORT}`);
-  // Lancé avec "npm run dev" (fichier .ts) : le jeu est servi par Vite, sur le port 5173.
-  const isDev = import.meta.url.endsWith(".ts");
+  console.log(`🍕 Livreurs de l'Apocalypse : serveur prêt sur le port ${PORT} (version ${VERSION})`);
   if (!process.env.PORT) console.log(`   Ouvrez http://localhost:${isDev ? 5173 : PORT}`);
 });

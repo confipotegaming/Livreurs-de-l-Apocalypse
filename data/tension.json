@@ -1,0 +1,6 @@
+{
+  "_aide": "Directeur de tension (façon Left 4 Dead). Après calmeAvantMenace secondes sans danger, il envoie une menace. Après des dégâts, il laisse repitApresDegats secondes de répit.",
+  "calmeAvantMenace": 45,
+  "repitApresDegats": 30,
+  "menacesMaxSimultanees": 2
+}

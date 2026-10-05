@@ -1,5 +1,6 @@
 import * as THREE from "three";
-import { FLASHLIGHT, PLAYER } from "./config";
+import { options } from "../core/options";
+import { FLASHLIGHT, PLAYER, QUALITY } from "./config";
 import type { Input } from "./input";
 import { RAPIER } from "./physics";
 
@@ -10,6 +11,8 @@ import { RAPIER } from "./physics";
 // - La lampe torche suit le regard avec un petit retard, comme si on la tenait à la main.
 
 const UP = new THREE.Vector3(0, 1, 0);
+/** Sensibilité de la souris à 1 dans les options (radians par pixel). */
+const BASE_MOUSE_SENSITIVITY = 0.0022;
 
 export class Player {
   readonly camera: THREE.PerspectiveCamera;
@@ -42,7 +45,7 @@ export class Player {
     yaw: number,
   ) {
     this.yaw = yaw;
-    this.camera = new THREE.PerspectiveCamera(PLAYER.fov, 1, 0.05, 120);
+    this.camera = new THREE.PerspectiveCamera(options.champDeVision, 1, 0.05, 120);
     scene.add(this.camera);
 
     // Capsule de collision, déplacée par le code (et non par la gravité de Rapier).
@@ -71,7 +74,7 @@ export class Player {
       FLASHLIGHT.decay,
     );
     this.flashlight.castShadow = true;
-    this.flashlight.shadow.mapSize.set(FLASHLIGHT.shadowMapSize, FLASHLIGHT.shadowMapSize);
+    this.applyShadowQuality();
     this.flashlight.shadow.camera.near = 0.2;
     this.flashlight.shadow.camera.far = FLASHLIGHT.distance;
     this.flashlight.shadow.bias = -0.0004;
@@ -91,8 +94,9 @@ export class Player {
 
     if (readActions) {
       // --- Regarder avec la souris ---
-      this.yaw -= input.mouseDX * PLAYER.mouseSensitivity;
-      this.pitch -= input.mouseDY * PLAYER.mouseSensitivity;
+      const sensitivity = BASE_MOUSE_SENSITIVITY * options.sensibilite;
+      this.yaw -= input.mouseDX * sensitivity;
+      this.pitch -= input.mouseDY * sensitivity;
       this.pitch = THREE.MathUtils.clamp(this.pitch, -1.5, 1.5);
 
       if (input.wasPressed("KeyF")) {
@@ -166,6 +170,23 @@ export class Player {
     if (pitch !== undefined) this.pitch = pitch;
   }
 
+  /** Taille de la carte d'ombre de la lampe selon l'option "Qualité" (plus grand = plus net, plus lent). */
+  applyShadowQuality() {
+    const size = QUALITY.shadowMapSizeByLevel[options.qualite];
+    const shadow = this.flashlight.shadow;
+    if (shadow.mapSize.x === size) return;
+    shadow.mapSize.set(size, size);
+    // L'ancienne carte d'ombre est jetée : Three.js en recrée une à la bonne taille.
+    shadow.map?.dispose();
+    shadow.map = null;
+  }
+
+  /** Position des pieds (pour le menu de debug). */
+  get feet(): THREE.Vector3 {
+    const t = this.body.translation();
+    return new THREE.Vector3(t.x, t.y - (PLAYER.halfHeight + PLAYER.radius), t.z);
+  }
+
   /** Position du centre de la capsule. */
   get position(): THREE.Vector3 {
     const t = this.body.translation();
@@ -194,7 +215,7 @@ export class Player {
     this.camera.position.addScaledVector(new THREE.Vector3(1, 0, 0).applyAxisAngle(UP, this.yaw), bobX);
 
     // Champ de vision un peu plus large en sprint : sensation de vitesse.
-    const targetFov = this.sprinting ? PLAYER.sprintFov : PLAYER.fov;
+    const targetFov = options.champDeVision + (this.sprinting ? PLAYER.sprintFovBonus : 0);
     if (Math.abs(this.camera.fov - targetFov) > 0.01) {
       this.camera.fov += (targetFov - this.camera.fov) * Math.min(1, dt * 6);
       this.camera.updateProjectionMatrix();

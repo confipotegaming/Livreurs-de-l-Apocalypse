@@ -8,7 +8,7 @@
 export const ROOM_NAME = "salle";
 
 /** Nombre maximum de joueurs par salon. */
-export const MAX_PLAYERS = 5;
+export const MAX_PLAYERS = 8;
 
 /** Lettres utilisées pour les codes de salon (sans I ni O, trop proches de 1 et 0). */
 export const ROOM_CODE_LETTERS = "ABCDEFGHJKLMNPQRSTUVWXYZ";

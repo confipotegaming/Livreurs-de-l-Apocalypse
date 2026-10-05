@@ -1,0 +1,23 @@
+{
+  "_aide": "Calcul du pourboire = base × rapidité × état × série × difficulté. rapidite : selon la part du temps estimé utilisée (0,5 = livré en deux fois moins de temps que prévu). etat : selon l'état du colis (1 = parfait, 0 = détruit). series : à partir de N livraisons enchaînées sans échec, multiplicateur. notes : pourboires totaux minimum, par joueur, pour chaque note de fin.",
+  "rapidite": [
+    { "jusqua": 0.5, "multiplicateur": 1.5 },
+    { "jusqua": 1, "multiplicateur": 1.2 },
+    { "jusqua": 1.5, "multiplicateur": 1 },
+    { "jusqua": 2, "multiplicateur": 0.7 },
+    { "jusqua": 999, "multiplicateur": 0.4 }
+  ],
+  "etatMinimum": 0.1,
+  "series": [
+    { "livraisons": 3, "multiplicateur": 2 },
+    { "livraisons": 5, "multiplicateur": 3 },
+    { "livraisons": 8, "multiplicateur": 5 }
+  ],
+  "notes": [
+    { "note": "S", "pourboiresParJoueur": 120 },
+    { "note": "A", "pourboiresParJoueur": 80 },
+    { "note": "B", "pourboiresParJoueur": 50 },
+    { "note": "C", "pourboiresParJoueur": 20 },
+    { "note": "D", "pourboiresParJoueur": 0 }
+  ]
+}

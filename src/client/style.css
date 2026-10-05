@@ -49,8 +49,8 @@ kbd {
   border-radius: 5px;
 }
 
-/* ---------- Écran titre / pause ---------- */
-.menu {
+/* ---------- Écrans (menu, QG, chargement, pause, récap, options) ---------- */
+.ecran {
   position: fixed;
   inset: 0;
   z-index: 10;
@@ -65,7 +65,7 @@ kbd {
   backdrop-filter: blur(3px);
 }
 
-.menu h1 {
+.ecran h1 {
   margin: 0;
   text-align: center;
   font-size: clamp(2rem, 6vw, 3.5rem);
@@ -76,7 +76,7 @@ kbd {
   text-shadow: 0 0 24px rgba(255, 138, 0, 0.45);
 }
 
-.menu h1 span {
+.ecran h1 span {
   font-size: 0.55em;
   color: var(--text);
 }
@@ -224,12 +224,286 @@ button:disabled {
   background: var(--danger);
 }
 
-.fps {
+.timer {
   position: absolute;
-  top: 8px;
-  right: 12px;
+  top: 14px;
+  left: 50%;
   margin: 0;
-  font-size: 0.75rem;
-  color: rgba(255, 255, 255, 0.45);
+  transform: translateX(-50%);
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: rgba(243, 239, 230, 0.8);
+  text-shadow: 0 1px 4px #000;
   font-variant-numeric: tabular-nums;
+}
+
+.timer.curfew {
+  color: var(--danger);
+  font-size: 1.15rem;
+  animation: pulse 1s ease-in-out infinite alternate;
+}
+
+@keyframes pulse {
+  to {
+    opacity: 0.55;
+  }
+}
+
+/* ---------- Éléments communs des écrans ---------- */
+.ecran h2 {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(1.5rem, 4vw, 2.2rem);
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.card h3 {
+  margin: 4px 0 0;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+}
+
+.card.wide {
+  width: min(560px, 100%);
+}
+
+button.secondary {
+  color: var(--text);
+  background: #2a2a34;
+}
+
+button.secondary:hover:not(:disabled) {
+  background: #3a3a46;
+}
+
+button.danger {
+  color: var(--danger);
+}
+
+.row {
+  display: flex;
+  gap: 10px;
+}
+
+.row > * {
+  flex: 1;
+}
+
+.muted {
+  margin: 0;
+  color: var(--muted);
+}
+
+.small {
+  font-size: 0.8rem;
+}
+
+.center {
+  text-align: center;
+}
+
+.version {
+  margin: 0;
+  font-size: 0.7rem;
+  color: #5d5a66;
+  font-variant-numeric: tabular-nums;
+}
+
+.gerard {
+  margin: 0;
+  padding: 10px 14px;
+  font-style: italic;
+  color: var(--text);
+  background: rgba(255, 138, 0, 0.08);
+  border-left: 3px solid var(--accent);
+  border-radius: 4px;
+}
+
+/* Boutons de choix (quartier, difficulté). */
+.choix {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.choix button {
+  flex: 1 1 140px;
+  padding: 8px 10px;
+  font-size: 0.85rem;
+  text-align: left;
+  color: var(--text);
+  background: #22222b;
+  border: 2px solid transparent;
+}
+
+.choix button small {
+  display: block;
+  font-weight: 400;
+  color: var(--muted);
+}
+
+.choix button.selected {
+  border-color: var(--accent);
+  background: #2e2416;
+}
+
+.choix button:disabled {
+  cursor: not-allowed;
+}
+
+.note {
+  margin: 0;
+  text-align: center;
+  font-size: 4rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.details {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 4px 12px;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.details dt {
+  color: var(--muted);
+}
+
+.details dd {
+  margin: 0;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.option {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 0.9rem;
+}
+
+.option span {
+  display: flex;
+  justify-content: space-between;
+}
+
+.option output {
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+.option input[type="range"] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+select,
+input[type="number"] {
+  padding: 6px 8px;
+  font: inherit;
+  color: var(--text);
+  background: #22222b;
+  border: 1px solid #3a3a46;
+  border-radius: 6px;
+}
+
+/* ---------- Debug (F1) ---------- */
+.debug-infos {
+  position: fixed;
+  top: 8px;
+  left: 8px;
+  z-index: 30;
+  max-width: min(440px, calc(100vw - 16px));
+  pointer-events: none;
+}
+
+.debug-infos pre {
+  margin: 0;
+  padding: 8px 10px;
+  font: 12px/1.45 ui-monospace, Consolas, monospace;
+  color: #c8f7c5;
+  white-space: pre-wrap;
+  background: rgba(0, 0, 0, 0.72);
+  border-radius: 6px;
+}
+
+.debug-infos .ko {
+  color: #ff8a8a;
+}
+
+.debug-panneau {
+  position: fixed;
+  top: 8px;
+  right: 8px;
+  z-index: 31;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(340px, calc(100vw - 16px));
+  max-height: calc(100vh - 16px);
+  padding: 14px;
+  overflow-y: auto;
+  font-size: 0.85rem;
+  background: rgba(14, 14, 20, 0.95);
+  border: 2px solid #3a2a12;
+  border-radius: 10px;
+}
+
+.debug-panneau h3,
+.debug-panneau h4 {
+  margin: 0;
+  color: var(--accent);
+}
+
+.debug-panneau fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.debug-panneau fieldset:disabled {
+  opacity: 0.45;
+}
+
+.debug-panneau button {
+  padding: 6px 10px;
+  font-size: 0.85rem;
+}
+
+.dbg-ligne {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.dbg-ligne select {
+  flex: 1;
+}
+
+.dbg-ligne input[type="number"] {
+  width: 64px;
+}
+
+.dbg-problemes {
+  margin: 0;
+  padding-left: 18px;
+  color: #ff8a8a;
+  font-size: 0.78rem;
+}
+
+.dbg-problemes:empty::before {
+  content: "Aucune erreur.";
+  margin-left: -18px;
+  color: #8fd18b;
 }

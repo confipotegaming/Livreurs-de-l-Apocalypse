@@ -1,0 +1,8 @@
+{
+  "_aide": "Les 3 difficultés. creatures = multiplicateur du nombre de créatures, vitesseCreatures = multiplicateur de leur vitesse, dureeCouvreFeu = multiplicateur du temps avant le couvre-feu, pourboires = multiplicateur des pourboires.",
+  "difficultes": [
+    { "id": "tranquille", "nom": "Tranquille", "creatures": 1, "vitesseCreatures": 1, "dureeCouvreFeu": 1, "pourboires": 1 },
+    { "id": "agitee", "nom": "Agitée", "creatures": 1.5, "vitesseCreatures": 1.15, "dureeCouvreFeu": 0.85, "pourboires": 1.5 },
+    { "id": "cauchemar", "nom": "Cauchemar", "creatures": 2.2, "vitesseCreatures": 1.3, "dureeCouvreFeu": 0.7, "pourboires": 2.5 }
+  ]
+}

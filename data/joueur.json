@@ -1,0 +1,15 @@
+{
+  "_aide": "Le livreur. Vitesses en m/s, temps en secondes, distances en mètres.",
+  "vitesseMarche": 4.2,
+  "vitesseSprint": 7.2,
+  "acceleration": 12,
+  "enduranceSecondes": 4,
+  "recuperationParSeconde": 0.25,
+  "delaiRecuperation": 1,
+  "gravite": 20,
+  "aTerreSecondes": 30,
+  "reanimationSecondes": 4,
+  "distanceRamassage": 2.6,
+  "vitesseLancer": 11,
+  "elanLancer": 2.5
+}

@@ -1,6 +1,8 @@
 import type { PizzaHint } from "./pizza";
+import { formaterDuree, type Tournee } from "./tournee";
 
-// Interface par-dessus le jeu (HTML) : viseur, aides, endurance, images par seconde.
+// Interface par-dessus le jeu (HTML) : viseur, aides, endurance, compte à rebours du couvre-feu.
+// (Les images par seconde sont dans le panneau de debug, touche F1.)
 
 const $ = (id: string) => document.getElementById(id) as HTMLElement;
 
@@ -10,16 +12,15 @@ export class Hud {
   private readonly crosshair = $("crosshair");
   private readonly staminaBar = $("stamina");
   private readonly staminaFill = $("stamina-fill");
-  private readonly fps = $("fps");
+  private readonly timer = $("timer");
   private lastHint: PizzaHint | undefined;
-  private frames = 0;
-  private fpsTimer = 0;
+  private lastTimerText = "";
 
   show(visible: boolean) {
     this.root.classList.toggle("hidden", !visible);
   }
 
-  update(dt: number, hint: PizzaHint, stamina: number) {
+  update(hint: PizzaHint, stamina: number, tournee: Tournee) {
     if (hint !== this.lastHint) {
       this.lastHint = hint;
       this.hint.innerHTML =
@@ -35,13 +36,12 @@ export class Hud {
     this.staminaFill.style.width = `${Math.round(stamina * 100)}%`;
     this.staminaFill.classList.toggle("low", stamina < 0.3);
 
-    // Compteur d'images par seconde, mis à jour deux fois par seconde.
-    this.frames++;
-    this.fpsTimer += dt;
-    if (this.fpsTimer >= 0.5) {
-      this.fps.textContent = `${Math.round(this.frames / this.fpsTimer)} i/s`;
-      this.frames = 0;
-      this.fpsTimer = 0;
+    // On ne touche au texte que s'il change (une fois par seconde).
+    const text = tournee.couvreFeu ? "COUVRE-FEU — rentrez au van !" : `Couvre-feu dans ${formaterDuree(tournee.tempsRestant)}`;
+    if (text !== this.lastTimerText) {
+      this.lastTimerText = text;
+      this.timer.textContent = text;
+      this.timer.classList.toggle("curfew", tournee.couvreFeu);
     }
   }
 }

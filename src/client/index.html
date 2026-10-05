@@ -8,16 +8,49 @@
   <body>
     <div id="game"></div>
 
-    <!-- Écran titre / pause -->
-    <main id="menu" class="menu">
+    <!-- Chaque <main class="ecran"> est un écran du jeu. Un seul est visible à la fois
+         (c'est la machine à états de main.ts qui choisit lequel). -->
+
+    <!-- ===== Menu principal ===== -->
+    <main id="ecran-menu" class="ecran hidden">
       <h1>Livreurs<br /><span>de l'Apocalypse</span></h1>
       <p class="tagline">Livrer la pizza. Ne pas mourir. Dans cet ordre si possible.</p>
-
       <div class="card">
-        <p id="menu-status" class="status">Chargement de la rue…</p>
-        <div class="progress"><div id="progress-fill"></div></div>
-        <button id="play-btn" class="primary" type="button" disabled>Commencer la tournée</button>
+        <button id="menu-jouer" type="button">Jouer</button>
+        <button id="menu-options" class="secondary" type="button">Options</button>
+        <p class="muted small center"><kbd>F1</kbd> ou <kbd>²</kbd> : outils de debug</p>
+      </div>
+      <p class="credits">Modèles 3D : Kenney et Quaternius (CC0) — <a href="/LICENCES/README.md" target="_blank">licences</a></p>
+      <p class="version"></p>
+    </main>
 
+    <!-- ===== QG (version simple ; le QG en 3D arrive au jalon J3) ===== -->
+    <main id="ecran-qg" class="ecran hidden">
+      <h2>QG — Express Apocalypse</h2>
+      <p class="tagline">Un garage. Une odeur de friture froide. Le téléphone sonne.</p>
+      <div class="card wide">
+        <blockquote id="qg-gerard" class="gerard"></blockquote>
+        <h3>Quartier</h3>
+        <div id="qg-quartiers" class="choix"></div>
+        <h3>Difficulté</h3>
+        <div id="qg-difficultes" class="choix"></div>
+        <p id="qg-resume" class="muted small"></p>
+        <button id="qg-partir" type="button">Partir en tournée</button>
+        <div class="row">
+          <button id="qg-options" class="secondary" type="button">Options</button>
+          <button id="qg-menu" class="secondary" type="button">Menu principal</button>
+        </div>
+        <p class="muted small center">Le QG en 3D (balade, boutique, équipement) arrive au jalon J3.</p>
+      </div>
+    </main>
+
+    <!-- ===== Chargement ===== -->
+    <main id="ecran-chargement" class="ecran hidden">
+      <h2 id="chargement-titre">En route…</h2>
+      <div class="card">
+        <p id="chargement-statut" class="status">Chargement de la rue…</p>
+        <div class="progress"><div id="progress-fill"></div></div>
+        <button id="chargement-go" type="button" disabled>C'est parti !</button>
         <ul class="controls">
           <li><kbd>Z</kbd><kbd>Q</kbd><kbd>S</kbd><kbd>D</kbd> Se déplacer</li>
           <li><kbd>Souris</kbd> Regarder</li>
@@ -27,18 +60,110 @@
           <li><kbd>F</kbd> Allumer / éteindre la lampe</li>
           <li><kbd>Échap</kbd> Pause</li>
         </ul>
-        <p id="menu-error" class="error" role="alert"></p>
+        <p id="chargement-erreur" class="error" role="alert"></p>
+        <button id="chargement-retour" class="secondary hidden" type="button">Retour au QG</button>
       </div>
-      <p class="credits">Modèles 3D : Kenney et Quaternius (CC0) — <a href="/LICENCES/README.md" target="_blank">licences</a></p>
     </main>
 
-    <!-- Interface en jeu -->
+    <!-- ===== Pause (pendant une tournée) ===== -->
+    <main id="ecran-pause" class="ecran hidden">
+      <h2>Pause</h2>
+      <div class="card">
+        <button id="pause-reprendre" type="button">Reprendre la tournée</button>
+        <button id="pause-options" class="secondary" type="button">Options</button>
+        <button id="pause-abandon" class="secondary danger" type="button">Abandonner la tournée</button>
+        <p id="pause-erreur" class="error" role="alert"></p>
+      </div>
+    </main>
+
+    <!-- ===== Récap de fin de tournée (version simple ; le vrai récap arrive au jalon J1) ===== -->
+    <main id="ecran-recap" class="ecran hidden">
+      <h2>Récap de la tournée</h2>
+      <div class="card">
+        <p id="recap-note" class="note"></p>
+        <dl id="recap-details" class="details"></dl>
+        <blockquote id="recap-avis" class="gerard"></blockquote>
+        <button id="recap-qg" type="button">Retour au QG</button>
+      </div>
+    </main>
+
+    <!-- ===== Options ===== -->
+    <main id="ecran-options" class="ecran hidden">
+      <h2>Options</h2>
+      <div class="card">
+        <label class="option">
+          <span>Sensibilité de la souris <output id="opt-sensibilite-val"></output></span>
+          <input id="opt-sensibilite" type="range" min="0.2" max="3" step="0.05" />
+        </label>
+        <label class="option">
+          <span>Champ de vision <output id="opt-fov-val"></output></span>
+          <input id="opt-fov" type="range" min="60" max="100" step="1" />
+        </label>
+        <label class="option">
+          <span>Volume <output id="opt-volume-val"></output></span>
+          <input id="opt-volume" type="range" min="0" max="100" step="1" />
+        </label>
+        <label class="option">
+          <span>Qualité graphique</span>
+          <select id="opt-qualite">
+            <option value="basse">Basse (PC lent)</option>
+            <option value="moyenne">Moyenne</option>
+            <option value="haute">Haute</option>
+          </select>
+        </label>
+        <p class="muted small">Les sons arrivent au jalon J5 : le volume est déjà mémorisé.</p>
+        <div class="row">
+          <button id="opt-defaut" class="secondary" type="button">Par défaut</button>
+          <button id="opt-retour" type="button">Retour</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- ===== Interface en jeu ===== -->
     <div id="hud" class="hud hidden">
       <div id="crosshair" class="crosshair"></div>
       <p id="hint" class="hint"></p>
+      <p id="timer" class="timer"></p>
       <div id="stamina" class="stamina hidden"><div id="stamina-fill"></div></div>
-      <p id="fps" class="fps"></p>
     </div>
+
+    <!-- ===== Debug (F1) ===== -->
+    <aside id="debug-infos" class="debug-infos hidden">
+      <pre id="debug-texte"></pre>
+    </aside>
+    <aside id="debug-panneau" class="debug-panneau hidden">
+      <h3>Debug <kbd>F1</kbd></h3>
+      <p id="dbg-hors-tournee" class="muted small">Les actions marchent pendant une tournée.</p>
+      <fieldset id="dbg-actions">
+        <div class="dbg-ligne">
+          <select id="dbg-tp"></select>
+          <button id="dbg-tp-go" type="button">Téléporter</button>
+        </div>
+        <div class="dbg-ligne">
+          x <input id="dbg-x" type="number" step="1" value="0" />
+          z <input id="dbg-z" type="number" step="1" value="0" />
+          <button id="dbg-xz-go" type="button">Aller</button>
+        </div>
+        <div class="dbg-ligne">
+          <select id="dbg-creature"></select>
+          <button id="dbg-creature-go" type="button">Faire apparaître</button>
+        </div>
+        <div class="dbg-ligne">
+          <select id="dbg-colis"></select>
+          <button id="dbg-colis-go" type="button">Faire apparaître</button>
+        </div>
+        <label class="dbg-ligne"><input id="dbg-invincible" type="checkbox" /> Mode invincible</label>
+        <div class="dbg-ligne">
+          <button id="dbg-couvrefeu" type="button">Passer au couvre-feu</button>
+          <button id="dbg-vider" type="button">Retirer les mannequins</button>
+        </div>
+        <button id="dbg-recap" type="button">Terminer la tournée (récap)</button>
+      </fieldset>
+      <label class="dbg-ligne"><input id="dbg-garder" type="checkbox" checked /> Garder les infos à l'écran</label>
+      <h4>Erreurs</h4>
+      <ul id="dbg-problemes" class="dbg-problemes"></ul>
+      <button id="dbg-fermer" class="secondary" type="button">Fermer</button>
+    </aside>
 
     <script type="module" src="./main.ts"></script>
   </body>

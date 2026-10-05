@@ -1,0 +1,9 @@
+{
+  "_aide": "Modificateurs aléatoires de nuit. probabilite = chance (0 à 1) qu'il soit tiré pour une tournée. Les effets non indiqués valent 1 (aucun changement).",
+  "modificateurs": [
+    { "id": "brouillard", "nom": "Brouillard épais", "probabilite": 0.2, "effets": { "brouillard": 2 } },
+    { "id": "panne", "nom": "Panne de courant", "probabilite": 0.15, "effets": { "lampadaires": 0 } },
+    { "id": "pleineLune", "nom": "Pleine lune", "probabilite": 0.15, "effets": { "vitesseCreatures": 1.2 } },
+    { "id": "vip", "nom": "Nuit VIP", "probabilite": 0.1, "effets": { "chanceCommandeRare": 3 } }
+  ]
+}
