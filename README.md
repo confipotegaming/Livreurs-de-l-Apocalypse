@@ -3,15 +3,19 @@
 Jeu coopératif d'horreur-comique, jouable dans le navigateur, pour 1 à 5 amis.
 Le cahier des charges complet est dans [`DESIGN.md`](DESIGN.md).
 
-**Version actuelle : étapes 1 et 2 de la feuille de route**
+**Version actuelle : tranche visuelle 3D, en solo** (direction artistique façon *The Headliners*)
 
-- une salle sombre vue du dessus ;
-- un livreur qui se déplace en **ZQSD** (ou WASD, ou les flèches) ;
-- une lampe qui suit la **souris** et éclaire un cône (les meubles projettent de l'ombre) ;
-- un écran d'accueil : on choisit un pseudo, puis on **crée** un salon (code de 4 lettres) ou on en **rejoint** un ;
-- jusqu'à 5 joueurs par salon, chacun voit les autres bouger et éclairer.
+- une rue de nuit en 3D low-poly : immeubles, voitures abandonnées, lampadaires (dont un qui grésille
+  et deux en panne), néons colorés, brouillard ;
+- vue à la première personne : **ZQSD** (ou WASD) pour marcher, **souris** pour regarder,
+  **Maj** pour sprinter (jauge d'endurance) ;
+- une **lampe torche** qui projette des ombres (**F** pour l'allumer / l'éteindre) ;
+- une **boîte de pizza** : **E** pour la ramasser ou la poser, **clic droit** pour la lancer ;
+- des cônes de chantier qu'on peut renverser ;
+- post-traitement : bloom, grain, vignettage, légère aberration chromatique.
 
-Tout est dessiné avec des formes simples : aucune image ni son externe pour l'instant.
+Le multijoueur (salons à code de 4 lettres) reviendra à l'étape suivante : le serveur Colyseus est
+déjà prêt.
 
 ---
 
@@ -26,21 +30,13 @@ Tout est dessiné avec des formes simples : aucune image ni son externe pour l'i
 npm install
 ```
 
-Cela télécharge les bibliothèques (Phaser, Colyseus…) dans un dossier `node_modules`.
-
 ### 2. Pour développer (rechargement automatique)
 
 ```bash
 npm run dev
 ```
 
-Puis ouvrez **http://localhost:5173** dans le navigateur.
-Deux programmes tournent en même temps :
-
-- **[jeu]** : Vite, qui sert le jeu et le recharge dès qu'on modifie un fichier ;
-- **[serveur]** : le serveur multijoueur Colyseus, sur le port 2567.
-
-Pour arrêter : `Ctrl + C` dans le terminal.
+Puis ouvrez **http://localhost:5173**. Pour arrêter : `Ctrl + C` dans le terminal.
 
 ### 3. Pour tester comme en ligne (comme sur Render)
 
@@ -49,42 +45,45 @@ npm run build
 npm start
 ```
 
-Puis ouvrez **http://localhost:2567**. Ici, un seul serveur sert à la fois le jeu et le multijoueur,
-exactement comme sur Render.
+Puis ouvrez **http://localhost:2567**.
 
-### Tester le multijoueur avec deux onglets
+### Comment tester la tranche visuelle
 
-1. Ouvrez le jeu dans un premier onglet, tapez un pseudo et cliquez sur **Créer un salon**.
-2. Notez le code de 4 lettres affiché en haut à gauche (ou cliquez sur **Copier le lien**).
-3. Ouvrez un deuxième onglet (ou une fenêtre de navigation privée), entrez un autre pseudo,
-   tapez le code et cliquez sur **Rejoindre** (ou collez simplement le lien copié).
-4. Mettez les deux fenêtres côte à côte : quand vous bougez dans l'une, le livreur bouge dans l'autre.
+1. Attendez la fin du chargement de la rue, puis cliquez sur **Commencer la tournée** :
+   la souris est « capturée » par le jeu.
+2. Regardez autour de vous avec la souris, marchez avec ZQSD, sprintez avec Maj.
+3. La pizza est posée sur la chaussée, à quelques pas devant vous, un peu à droite. Regardez-la de près :
+   le viseur devient orange et « E Ramasser la pizza » s'affiche. Appuyez sur **E**.
+4. **Clic droit** pour la lancer (elle part en tournant), ou **E** pour la reposer.
+   Essayez de la lancer sur les cônes de chantier, plus loin près de la camionnette en travers.
+5. **F** éteint la lampe : on ne voit plus que les lampadaires et les néons.
+6. **Échap** met en pause et libère la souris.
 
-> Astuce : un onglet en arrière-plan est mis en pause par le navigateur. Pour bien voir les deux
-> en même temps, utilisez deux **fenêtres** côte à côte plutôt que deux onglets.
+En haut à droite, le compteur indique les **images par seconde** (objectif : 60). Si le PC n'arrive
+pas à suivre, le jeu baisse un peu la résolution tout seul.
+
+> Conseil : utilisez Chrome, Edge ou Firefox à jour. Sur un PC portable, branchez le chargeur :
+> sur batterie, la carte graphique est souvent bridée.
 
 ---
 
 ## Mettre en ligne sur Render
 
-Le dépôt GitHub est relié à un **Web Service** Render (langage Node).
-À chaque `git push` sur la branche suivie, Render reconstruit et redémarre le jeu.
+Le dépôt GitHub est relié à un **Web Service** Render (langage Node), qui suit la branche **`main`**.
+À chaque envoi sur `main`, Render reconstruit et redémarre le jeu.
 
 Dans Render, onglet **Settings** du service, vérifiez :
 
 | Réglage | Valeur |
 | --- | --- |
 | Language / Runtime | `Node` |
+| Branch | `main` |
 | Build Command | `npm install --include=dev && npm run build` |
 | Start Command | `npm start` |
 | Health Check Path (facultatif) | `/health` |
 | Variable d'environnement (facultatif) | `NODE_VERSION` = `22` |
 
-À ne **pas** faire : définir vous-même la variable `PORT`. Render la fournit automatiquement,
-et le serveur l'utilise (`process.env.PORT`).
-
-Le fichier `render.yaml` contient les mêmes réglages. Il ne sert que si vous créez le service via
-**New > Blueprint** ; avec un service déjà existant, recopiez simplement les valeurs ci-dessus.
+À ne **pas** faire : définir vous-même la variable `PORT`. Render la fournit automatiquement.
 
 > Sur l'offre gratuite de Render, le serveur s'endort après 15 minutes sans visite :
 > le premier chargement peut alors prendre une minute. C'est normal.
@@ -99,25 +98,28 @@ CLAUDE.md              Résumé du projet et règles de travail pour l'IA
 render.yaml            Réglages Render
 package.json           Liste des bibliothèques et des commandes (dev, build, start)
 vite.config.ts         Réglages de Vite (outil qui compile le jeu)
-tsconfig.json          Réglages TypeScript du jeu
-tsconfig.server.json   Réglages TypeScript du serveur
+assets/
+  models/              Modèles 3D gratuits (Kenney, Quaternius)
+  LICENCES/            Licences des modèles (toutes CC0, domaine public)
 src/
   client/              Le jeu, qui tourne dans le navigateur
-    index.html         La page : écran d'accueil + bandeau en jeu
-    style.css          L'apparence de l'écran d'accueil
-    main.ts            Accueil, connexion au serveur, lancement de Phaser
-    scenes/RoomScene.ts  La salle : dessin, déplacements, lampe, obscurité
-    types.ts           Forme des données reçues du serveur
-  server/              Le serveur Node
-    index.ts           Démarre le serveur web + Colyseus sur le port PORT
-    rooms/GameRoom.ts  Un salon : code à 4 lettres, joueurs, calcul des déplacements
-    rooms/GameState.ts Les données partagées avec tous les joueurs
-  shared/
-    game.ts            Règles communes au jeu et au serveur (salle, vitesse, collisions)
+    index.html         La page : écran titre + interface en jeu
+    style.css          L'apparence des menus
+    main.ts            Chargement, bouton « Commencer », pause
+    game/
+      Game.ts          Le chef d'orchestre : rendu, boucle de jeu
+      config.ts        Tous les réglages (vitesses, lampe, brouillard…)
+      street.ts        La rue : immeubles, voitures, lampadaires, néons
+      player.ts        Le livreur : déplacement, sprint, lampe torche
+      pizza.ts         La boîte de pizza : ramasser, poser, lancer
+      postfx.ts        Effets : bloom, grain, vignettage, aberration chromatique
+      physics.ts       Collisions (Rapier)
+      assets.ts        Chargement des modèles 3D
+      input.ts         Clavier et souris
+      hud.ts           Viseur, aides, endurance, images/s
+  server/              Le serveur Node (sert le jeu + Colyseus pour le multijoueur)
+  shared/              Règles communes au jeu et au serveur
 ```
-
-Les dossiers `node_modules` (bibliothèques) et `dist` (résultat du build) sont recréés
-automatiquement : ils ne sont pas enregistrés dans Git.
 
 ## Commandes utiles
 
@@ -128,3 +130,9 @@ automatiquement : ils ne sont pas enregistrés dans Git.
 | `npm run build` | Compile le jeu et le serveur dans `dist/` |
 | `npm start` | Lance le serveur compilé (http://localhost:2567) |
 | `npm run typecheck` | Vérifie le code TypeScript sans rien lancer |
+
+## Crédits
+
+Modèles 3D : [Kenney](https://kenney.nl) (City Kit Commercial, City Kit Roads, Car Kit, Food Kit) et
+[Quaternius](https://quaternius.com) (Modular Streets), sous licence CC0. Détails dans
+[`assets/LICENCES`](assets/LICENCES/README.md).

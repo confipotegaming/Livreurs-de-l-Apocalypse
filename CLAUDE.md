@@ -10,37 +10,59 @@ moins un des 4 piliers.
 La porteuse du projet débute en code : **expliquer simplement** ce qui est fait, en français,
 sans jargon inutile.
 
+## Direction artistique (depuis le 5 oct. 2026)
+
+**3D low-poly à la première personne, façon The Headliners.** La 2D vue du dessus (Phaser) est
+abandonnée. Nuit, brouillard, lampe torche, lampadaires qui grésillent, néons colorés,
+post-traitement (bloom, grain, vignettage, légère aberration chromatique).
+
 ## Où on en est
 
-- [x] Étape 1 — Prototype solo : salle sombre vue du dessus, déplacement ZQSD, lampe à la souris
-      (cône avec ombres portées par les meubles).
-- [x] Étape 2 — Multijoueur : écran d'accueil (pseudo, créer / rejoindre un salon avec un code de
-      4 lettres ou un lien `?salon=ABCD`), jusqu'à 5 joueurs qui se voient bouger.
-      L'hôte voit d'abord une fenêtre qui explique comment inviter ; le bandeau affiche « Livreurs 2/5 ».
-- [ ] Étape 3 — Le cœur du jeu : commandes, porter et lancer des colis, pourboires, une créature, mort.
-- [ ] Étapes 4 à 7 : voir `DESIGN.md`.
+- [x] Prototype 2D (Phaser) + multijoueur à deux onglets, salons de 1 à 5 joueurs avec fenêtre
+      d'explication pour l'hôte — **abandonné** (dans l'historique Git ; à reprendre en 3D).
+- [x] Tranche visuelle 3D **solo** : une rue de nuit (immeubles, voitures abandonnées, 6 lampadaires
+      dont 1 qui grésille et 2 en panne, 4 néons), vue FPS, ZQSD + souris (pointer lock), Maj pour
+      sprinter (endurance), F pour la lampe, une boîte de pizza à ramasser (E) et lancer (clic droit),
+      cônes de chantier qu'on peut renverser.
+- [ ] Multijoueur 3D (rebrancher Colyseus : positions, regard, lampe, pizza).
+- [ ] Étape « cœur du jeu » et suivantes : voir `DESIGN.md`.
 
-Pas encore fait : reconnexion après coupure (prévue : 2 minutes), chat, sauvegarde.
+Pas encore fait : sons, créatures, règle « porter un colis = pas de lampe » (DESIGN.md), reconnexion.
 
 ## Stack
 
-- **Phaser 3** + **TypeScript** + **Vite** pour le jeu (`src/client`).
-- **Colyseus 0.16** pour le multijoueur (`src/server`), client `colyseus.js` 0.16.
-- **Express** sert le build Vite. **Un seul serveur Node** fait tout tourner (un seul Web Service Render).
-- Code commun aux deux côtés dans `src/shared` (règles, collisions).
-- Graphismes : uniquement des formes dessinées (Graphics Phaser). Pas de ressources externes pour l'instant.
+- **Three.js** (0.186) pour la 3D, **Rapier** (`@dimforge/rapier3d-compat`, 0.21) pour la physique,
+  **postprocessing** (6.x) pour les effets, **Vite** + **TypeScript**.
+- **Colyseus 0.16** côté serveur (`src/server`). La salle `GameRoom` (codes à 4 lettres) est gardée
+  prête mais **le jeu 3D ne s'y connecte pas encore** (pas de `colyseus.js` côté client pour l'instant).
+- **Express** sert le build Vite (avec compression gzip). **Un seul serveur Node** = un seul Web Service Render.
 
-## Architecture réseau
+## Organisation du code (`src/client/game/`)
 
-- Le **serveur a le dernier mot** (DESIGN.md) : il calcule le jeu 20 fois par seconde
-  (`SERVER_TICK_MS`).
-- Le navigateur envoie des **entrées** (`"input"` : `seq`, `dx`, `dy`, `angle`) par pas fixes de 1/60 s.
-  Il applique le même pas tout de suite (**prédiction**), puis, à chaque mise à jour du serveur,
-  repart de la position officielle et rejoue les entrées non confirmées (`lastSeq`).
-- Les autres joueurs sont **lissés** vers la position reçue.
-- `movePlayer()` et `collides()` dans `src/shared/game.ts` doivent rester **identiques** des deux côtés :
-  ne jamais dupliquer cette logique.
-- Le code du salon **est** l'identifiant de la salle Colyseus (`roomId`) ; il est libéré à la fermeture.
+| Fichier | Rôle |
+| --- | --- |
+| `Game.ts` | Rendu, boucle de jeu, pas de physique, résolution automatique |
+| `config.ts` | **Tous les réglages** (vitesses, lampe, brouillard, qualité) |
+| `input.ts` | Clavier (par `event.code`, donc AZERTY et QWERTY) et souris |
+| `assets.ts` | Liste et chargement des modèles (GLB Kenney, OBJ+MTL Quaternius) |
+| `physics.ts` | Monde Rapier, boîtes de collision à partir des modèles |
+| `street.ts` | La rue : placement des modèles, lampadaires, néons, cônes |
+| `player.ts` | Joueur FPS (contrôleur de personnage Rapier), sprint, balancement, lampe torche |
+| `pizza.ts` | Boîte de pizza : ramasser / poser / lancer |
+| `postfx.ts` | Post-traitement |
+| `hud.ts` | Viseur, aides, endurance, images/s |
+
+Ajouter `?debug` à l'adresse expose le jeu dans la console : `window.livreurs`
+(ex. `livreurs.player.teleport(0, 0, 10)`).
+
+## Ressources 3D
+
+- Dans `assets/models/<auteur>-<pack>/`, licences dans `assets/LICENCES/` (+ tableau dans `README.md` de ce dossier).
+- **Uniquement des modèles CC0** (Kenney, Quaternius). Copier seulement les fichiers utilisés, avec le
+  dossier `Textures/` du kit (chaque kit Kenney a son propre `colormap.png`).
+- Vite sert `assets/` à la racine du site (`publicDir`) : `assets/models/x.glb` → `/models/x.glb`.
+- Échelles : kits ville Kenney ×8 (1 case de route = 8 m), voitures Kenney ×1,6, Quaternius ×4,5 à ×5,5.
+  Les dalles de route Kenney sont orientées selon X (tournées d'un quart de tour).
 
 ## Commandes
 
@@ -51,26 +73,42 @@ Pas encore fait : reconnexion après coupure (prévue : 2 minutes), chat, sauveg
 | `npm start` | `node dist/server/index.js` : sert le jeu + Colyseus sur `process.env.PORT` (2567 par défaut) |
 | `npm run typecheck` | Vérification TypeScript du jeu et du serveur |
 
-Render : Build `npm install --include=dev && npm run build`, Start `npm start`.
+Render : Build `npm install --include=dev && npm run build`, Start `npm start`, branche `main`.
+
+## Performance (objectif : 60 images/s sur un PC portable moyen)
+
+- Seule la **lampe torche** projette des ombres. Lampadaires = SpotLight sans ombre ; néons = PointLight.
+  Limiter le nombre de lumières (≈ 9 actuellement) : chacune coûte sur tous les pixels.
+- Objets immobiles : `matrixAutoUpdate = false` (fonction `freeze` dans `street.ts`).
+- Effets regroupés en 2 passes `EffectPass` ; l'aberration chromatique (effet de "convolution")
+  doit être dans une passe sans autre convolution.
+- `Game.adaptQuality` baisse la résolution si < 55 i/s, la remonte prudemment au-dessus de 58,5.
+- Le navigateur de test sans GPU tourne à ~3 i/s : les mesures de fluidité se font sur un vrai PC.
 
 ## Pièges connus
 
+- Physique : pas de temps limité à 1/30 s, découpé en sous-pas si l'image est lente (`MAX_STEPS`) ;
+  les actions (E, clic droit, F, souris) ne sont lues qu'au **premier** sous-pas.
+- La caméra est placée **après** `world.step()` (`player.afterPhysics`), sinon elle a une image de retard.
+- Pizza tenue en main = corps cinématique + capteur (`setSensor(true)`), sinon elle pousse le joueur ;
+  le contrôleur ignore les capteurs (`EXCLUDE_SENSORS`).
+- Le modèle Kenney `pizza-box` a le couvercle ouvert : `closeLid()` le referme.
+- Matériaux OBJ multi-matériaux : garder un tableau seulement si l'original en est un.
 - Le serveur utilise les décorateurs `@type` de Colyseus : `tsconfig.server.json` doit garder
   `experimentalDecorators: true` et `useDefineForClassFields: false`, et `tsx` doit recevoir
-  `--tsconfig tsconfig.server.json` (sinon plantage au démarrage en dev).
+  `--tsconfig tsconfig.server.json`.
 - Côté serveur (ESM Node), les imports relatifs finissent par `.js` (ex. `../shared/game.js`).
-- Le déplacement local utilise `this.game.loop.rawDelta` (temps réel) : le `delta` de Phaser est
-  ralenti quand les images sont lentes.
-- Rester sur **Phaser 3** (pas Phaser 4) et sur **Colyseus 0.16** tant qu'on n'a pas décidé de migrer.
+- Rester sur **Three 0.186.x** tant que `postprocessing` n'accepte pas plus récent (peer `< 0.187`),
+  et sur **Colyseus 0.16**.
 
 ## Règles de travail (DESIGN.md)
 
 1. **Une petite étape à la fois.** Ne pas faire plusieurs fonctionnalités d'un coup.
-2. **Tester après chaque demande** : `npm run typecheck`, `npm run build`, puis jouer à deux onglets.
+2. **Tester après chaque demande** : `npm run typecheck`, `npm run build`, puis jouer.
    Si ça casse, décrire précisément ce qu'on voit et le message d'erreur.
 3. **Sauvegarder avec Git à chaque étape qui marche**, avec un message de commit clair.
 4. **Expliquer** les fichiers et choix quand on le demande (ou quand c'est nouveau).
 5. **Relire régulièrement** le projet pour repérer ce qui est fragile ou mal organisé.
 
-Conventions : code et commentaires en français pour ce qui est propre au jeu ; constantes de
-gameplay dans `src/shared/game.ts` ; ne jamais committer `node_modules`, `dist` ni `.env`.
+Conventions : code et commentaires en français pour ce qui est propre au jeu ; réglages dans
+`src/client/game/config.ts` ; ne jamais committer `node_modules`, `dist` ni `.env`.

@@ -2,6 +2,11 @@
 
 Oct 5, 2026 · @Elisa
 
+> **Changement de direction (5 oct. 2026)** : on abandonne la 2D vue du dessus (Phaser) pour de la
+> **3D à la première personne low-poly, façon The Headliners** (Three.js + Rapier). Le serveur Node +
+> Colyseus et l'hébergement Render restent. Les sections « Direction artistique », « Vue et choix
+> techniques » et « Étapes » ci-dessous sont à jour.
+
 ## Concept
 
 LIVREURS DE L'APOCALYPSE est un jeu coop d'horreur-comique pour 1 à 5 amis, jouable dans le navigateur : une équipe de livreurs de nuit doit livrer des commandes dans une ville envahie de créatures, avant que tout refroidisse, se casse ou se fasse dévorer.
@@ -54,11 +59,12 @@ En tournée, on ne tue pas les monstres : on récupère des commandes, on les tr
 | Action | Touche |
 | --- | --- |
 | Se déplacer | ZQSD (ou WASD) |
-| Viser / orienter la lampe | Souris |
+| Regarder (et orienter la lampe torche) | Souris |
 | Prendre ou poser un colis, interagir, réanimer | E |
 | Lancer un colis à un coéquipier | Clic droit (maintenu pour viser) |
 | Utiliser l'objet en main | Clic gauche |
 | Sprinter | Maj (jauge d'endurance) |
+| Allumer / éteindre sa lampe | F |
 | Changer d'objet | Molette ou 1 à 4 |
 | Ping « regardez ici » | Clic molette |
 | Emote | T |
@@ -155,37 +161,43 @@ La sensation de « encore une partie » vient de récompenses empilées sur plus
 
 ## Direction artistique et son
 
-L'ambiance mélange vraie tension et humour absurde : une ville de nuit inquiétante, traversée par des livreurs ronds et ridicules en uniforme criard.
+L'ambiance mélange vraie tension et humour absurde : une ville de nuit inquiétante, traversée par des livreurs ronds et ridicules en uniforme criard. **Référence visuelle : The Headliners.**
 
-- **Style visuel** : pixel art ou dessin simple aux contours épais ; livreurs mignons et maladroits, créatures dérangeantes. Le contraste entre les deux fait l'humour.
-- **Lumière** : c'est l'élément clé de la peur. Obscurité quasi totale, cônes de lampe, lampadaires qui grésillent.
+- **Style visuel** : 3D low-poly à la première personne, formes simples et couleurs franches (kits Kenney / Quaternius), rendu « caméra bon marché » grâce au post-traitement. Livreurs mignons et maladroits, créatures dérangeantes : le contraste entre les deux fait l'humour.
+- **Lumière** : c'est l'élément clé de la peur. Obscurité quasi totale et brouillard ; on ne voit que ce qu'éclaire sa lampe torche (avec ombres portées), les lampadaires (dont certains grésillent ou sont en panne) et quelques néons colorés.
+- **Post-traitement** : bloom (les lumières bavent), grain de pellicule, vignettage, légère aberration chromatique. C'est ce qui donne le « look » à des modèles très simples.
 - **Interface** : façon appli de livraison sur téléphone, avec carte des commandes, minuteurs, notifications de pourboires, notes et avis clients.
 - **Lieux** : quartier résidentiel au lancement, puis centre-ville, centre commercial, zone industrielle.
 - **Son** : il porte la moitié de la peur. Bruits de pas spatialisés, respiration, silence soudain avant une apparition. Côté humour : « ding » de notification, sonnette du client, cris exagérés, bruitages cartoon à la mort.
-- **Ressources** : packs gratuits (Kenney, itch.io, OpenGameArt) pour démarrer ; on remplace par du sur-mesure plus tard si le jeu vous plaît.
+- **Ressources** : modèles 3D gratuits et libres de droits (CC0) de Kenney et Quaternius, rangés dans `assets/models`, avec leurs licences dans `assets/LICENCES` ; on remplace par du sur-mesure plus tard si le jeu vous plaît.
 
 ## Vue et choix techniques
 
-**Recommandation : 2D vue du dessus avec éclairage dynamique.** C'est le meilleur compromis pour un jeu web à 5 joueurs développé avec une IA, et la vue du dessus fonctionne très bien pour l'horreur grâce au champ de vision limité par la lampe.
+**Choix retenu : 3D à la première personne, low-poly, façon The Headliners.**
+(Le premier prototype était en 2D vue du dessus avec Phaser ; on l'a abandonné pour une direction artistique plus immersive.)
 
-| Critère | 2D vue du dessus | 3D première personne |
+| Critère | 2D vue du dessus (abandonnée) | 3D première personne (retenue) |
 | --- | --- | --- |
-| Difficulté à coder avec une IA | Faible | Élevée (physique, caméra, animations 3D) |
-| Ressources graphiques gratuites | Très nombreuses | Moins nombreuses, plus lourdes |
-| Performances navigateur à 5 joueurs | Excellentes | Variables selon le PC |
+| Difficulté à coder avec une IA | Faible | Plus élevée (physique, caméra, animations 3D) |
+| Ressources graphiques gratuites | Très nombreuses | Nombreuses en low-poly (Kenney, Quaternius) |
+| Performances navigateur à 5 joueurs | Excellentes | À surveiller : objectif 60 images/s sur un PC portable moyen |
 | Peur ressentie | Bonne grâce à la lumière | Très forte |
-| Temps avant une première version jouable | Quelques semaines | Plusieurs mois |
+| Temps avant une première version jouable | Quelques semaines | Plus long |
 
-La 3D reste possible plus tard (en low-poly avec Three.js) si la version 2D vous plaît et que vous voulez aller plus loin.
+Pour tenir les 60 images/s : peu de lumières qui projettent des ombres (seulement la lampe torche),
+brouillard qui cache le lointain, effets de post-traitement regroupés, résolution qui baisse
+automatiquement si le PC n'arrive pas à suivre.
 
-**Stack recommandée**
+**Stack**
 
 | Brique | Outil | Rôle |
 | --- | --- | --- |
 | Langage | TypeScript | Le même langage côté jeu et côté serveur |
-| Moteur de jeu | Phaser 3 | Affichage 2D, lumières, sons, animations dans le navigateur |
+| Moteur 3D | Three.js | Affichage 3D, lumières, ombres, chargement des modèles dans le navigateur |
+| Physique | Rapier | Collisions, déplacement du personnage, objets qu'on lance |
+| Post-traitement | postprocessing | Bloom, grain, vignettage, aberration chromatique |
 | Serveur multijoueur | Colyseus (Node.js) | Salons, synchronisation des joueurs, logique de partie |
-| Éditeur de maps | Tiled | Dessiner les salles qui seront assemblées aléatoirement |
+| Construction des niveaux | Kits modulaires (Kenney, Quaternius) placés par le code | Rues et bâtiments assemblés aléatoirement |
 | Sauvegarde | PostgreSQL (base Render) | Profils, équipement, progression du QG |
 | Outil de build | Vite | Lancer et compiler le projet |
 | Hébergement | Render (Web Service Node.js), déployé automatiquement depuis GitHub | Faire tourner le jeu pour vos amis, quelques euros par mois |
@@ -220,8 +232,9 @@ La première version jouable (MVP) doit tenir en une seule soirée de test entre
 
 **Les étapes, dans l'ordre**
 
-1. **Prototype solo** : un personnage qui se déplace dans le noir avec sa lampe, dans une salle. Objectif : que ce soit déjà un peu angoissant.
-2. **Multijoueur** : deux onglets du navigateur voient le même monde et les mêmes joueurs.
+0. ~~Prototype 2D (Phaser) : salle sombre, lampe, multijoueur à deux onglets~~ — fait, puis abandonné au profit de la 3D.
+1. **Tranche visuelle 3D (solo)** : une rue de nuit low-poly à la première personne, lampe torche, lampadaires, néons, post-traitement, une pizza à ramasser et lancer. Objectif : que l'ambiance soit déjà là. — **fait**
+2. **Multijoueur** : deux onglets du navigateur voient la même rue et les mêmes livreurs.
 3. **Le cœur du jeu** : commandes, porter et lancer des colis, pourboires, une première créature, mort.
 4. **Une partie complète** : quartier généré, retour au van, récap. Premier test avec les amis.
 5. **Le QG** : lobby, équipement, personnalisation, sauvegarde.
@@ -250,6 +263,6 @@ Le plus efficace est un assistant de code qui travaille directement dans les fic
 
 **Exemple de première demande**
 
-> Lis DESIGN.md. Crée un projet Phaser 3 + TypeScript avec Vite. Affiche une salle sombre vue du dessus, un personnage qui se déplace en ZQSD et une lampe qui suit la souris en éclairant un cône. Explique-moi comment lancer le jeu.
+> Lis DESIGN.md. Crée une rue de nuit en 3D avec Three.js + Rapier, vue à la première personne, déplacement ZQSD, souris pour regarder, et une lampe torche. Explique-moi comment lancer le jeu.
 
 **Budget indicatif** : un abonnement à l'assistant IA et quelques euros par mois de serveur une fois le jeu en ligne ; les ressources graphiques et sonores de départ peuvent être gratuites.

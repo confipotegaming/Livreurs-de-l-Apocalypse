@@ -1,6 +1,7 @@
 import fs from "node:fs";
 import http from "node:http";
 import path from "node:path";
+import compression from "compression";
 import express from "express";
 import { Server } from "@colyseus/core";
 import { WebSocketTransport } from "@colyseus/ws-transport";
@@ -15,6 +16,8 @@ import { GameRoom } from "./rooms/GameRoom.js";
 const PORT = Number(process.env.PORT) || 2567;
 
 const app = express();
+// Compresse les fichiers envoyés (le jeu passe d'environ 5 Mo à moins de 2 Mo à télécharger).
+app.use(compression());
 
 // Petite page de santé : Render l'appelle pour vérifier que le serveur répond.
 app.get("/health", (_req, res) => {
