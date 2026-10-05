@@ -1,0 +1,11 @@
+{
+  "_aide": "Créatures. Vitesses en mètres/seconde, distances en mètres. vision = distance à laquelle elle voit un livreur éclairé ; ouie = distance à laquelle elle entend un bruit normal (le sprint compte double).",
+  "creatures": [
+    { "id": "rodeur", "nom": "Rôdeur", "vitesseMarche": 1.6, "vitesseCharge": 6.5, "vision": 18, "ouie": 12, "degats": 1, "attireParNourriture": true, "attireParLumiere": false, "boss": false },
+    { "id": "timide", "nom": "Timide", "vitesseMarche": 0, "vitesseCharge": 9, "vision": 30, "ouie": 6, "degats": 1, "attireParNourriture": false, "attireParLumiere": false, "boss": false },
+    { "id": "essaim", "nom": "Essaim", "vitesseMarche": 2.5, "vitesseCharge": 5, "vision": 25, "ouie": 4, "degats": 0.5, "attireParNourriture": false, "attireParLumiere": true, "boss": false },
+    { "id": "mimic", "nom": "Mimic", "vitesseMarche": 0, "vitesseCharge": 7, "vision": 3, "ouie": 3, "degats": 1, "attireParNourriture": false, "attireParLumiere": false, "boss": false },
+    { "id": "sirene", "nom": "Sirène", "vitesseMarche": 1.2, "vitesseCharge": 5.5, "vision": 15, "ouie": 20, "degats": 1, "attireParNourriture": false, "attireParLumiere": false, "boss": false },
+    { "id": "gros", "nom": "Le Gros", "vitesseMarche": 1, "vitesseCharge": 2, "vision": 20, "ouie": 25, "degats": 2, "attireParNourriture": true, "attireParLumiere": true, "boss": true }
+  ]
+}

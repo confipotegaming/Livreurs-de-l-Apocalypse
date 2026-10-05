@@ -2,10 +2,16 @@
 
 ## Le projet
 
-Jeu coop d'horreur-comique dans le navigateur (1 à 5 amis) : des livreurs de nuit livrent des
-commandes dans une ville envahie de créatures. Le cahier des charges complet est dans
-`DESIGN.md` : **le lire avant toute nouvelle fonctionnalité**, et vérifier que l'idée sert au
-moins un des 4 piliers.
+Jeu coop d'horreur-comique dans le navigateur (1 à 8 amis) : des livreurs de nuit livrent des
+commandes à Saint-Néon, une ville envahie de créatures.
+
+**À relire au début de chaque session :**
+- `docs/BIBLE.md` : **la référence du jeu** (univers, boucle, quartiers, créatures, progression).
+  Elle prime sur `DESIGN.md` (cahier des charges d'origine, gardé pour les 4 piliers et le détail).
+- `docs/ROADMAP.md` : les jalons J0 à J7 et où on en est.
+- `docs/ARCHITECTURE.md` : organisation du code (machine à états, /data, debug, sauvegarde).
+
+Toute nouvelle idée doit servir au moins un des 4 piliers (`DESIGN.md`).
 
 La porteuse du projet débute en code : **expliquer simplement** ce qui est fait, en français,
 sans jargon inutile.
@@ -18,16 +24,8 @@ post-traitement (bloom, grain, vignettage, légère aberration chromatique).
 
 ## Où on en est
 
-- [x] Prototype 2D (Phaser) + multijoueur à deux onglets, salons de 1 à 5 joueurs avec fenêtre
-      d'explication pour l'hôte — **abandonné** (dans l'historique Git ; à reprendre en 3D).
-- [x] Tranche visuelle 3D **solo** : une rue de nuit (immeubles, voitures abandonnées, 6 lampadaires
-      dont 1 qui grésille et 2 en panne, 4 néons), vue FPS, ZQSD + souris (pointer lock), Maj pour
-      sprinter (endurance), F pour la lampe, une boîte de pizza à ramasser (E) et lancer (clic droit),
-      cônes de chantier qu'on peut renverser.
-- [ ] Multijoueur 3D (rebrancher Colyseus : positions, regard, lampe, pizza).
-- [ ] Étape « cœur du jeu » et suivantes : voir `DESIGN.md`.
-
-Pas encore fait : sons, créatures, règle « porter un colis = pas de lampe » (DESIGN.md), reconnexion.
+Voir `docs/ROADMAP.md`. **J0 terminé** (réparation, machine à états, /data, debug F1, options).
+Prochain : **J1** (une tournée complète en solo dans Les Lilas).
 
 ## Stack
 
@@ -37,23 +35,26 @@ Pas encore fait : sons, créatures, règle « porter un colis = pas de lampe » 
   prête mais **le jeu 3D ne s'y connecte pas encore** (pas de `colyseus.js` côté client pour l'instant).
 - **Express** sert le build Vite (avec compression gzip). **Un seul serveur Node** = un seul Web Service Render.
 
-## Organisation du code (`src/client/game/`)
+## Organisation du code
 
-| Fichier | Rôle |
+Vue d'ensemble dans `docs/ARCHITECTURE.md`. En bref :
+
+| Où | Rôle |
 | --- | --- |
-| `Game.ts` | Rendu, boucle de jeu, pas de physique, résolution automatique |
-| `config.ts` | **Tous les réglages** (vitesses, lampe, brouillard, qualité) |
-| `input.ts` | Clavier (par `event.code`, donc AZERTY et QWERTY) et souris |
-| `assets.ts` | Liste et chargement des modèles (GLB Kenney, OBJ+MTL Quaternius) |
-| `physics.ts` | Monde Rapier, boîtes de collision à partir des modèles |
-| `street.ts` | La rue : placement des modèles, lampadaires, néons, cônes |
-| `player.ts` | Joueur FPS (contrôleur de personnage Rapier), sprint, balancement, lampe torche |
-| `pizza.ts` | Boîte de pizza : ramasser / poser / lancer |
-| `postfx.ts` | Post-traitement |
-| `hud.ts` | Viseur, aides, endurance, images/s |
+| `data/*.json` | **Tous les chiffres de gameplay** (quartiers, créatures, colis, objets, XP, prix…) |
+| `src/shared/donnees.ts` | Forme des fichiers /data + `verifierDonnees` |
+| `src/shared/regles.ts` | Règles pures (pourboires, XP, niveaux, difficulté), testées dans `tests/` |
+| `src/client/main.ts` | Point d'entrée : machine à états ↔ écrans HTML ↔ jeu 3D |
+| `src/client/core/` | `machine.ts`, `ecrans.ts` (passages permis), `options.ts`, `sauvegarde.ts`, `diagnostic.ts` |
+| `src/client/debug.ts` | Panneau de debug F1 (ou ²) |
+| `src/client/game/Game.ts` | Rendu, boucle de jeu, pas de physique, résolution auto, outils de debug |
+| `src/client/game/config.ts` | Réglages **techniques** (lampe, brouillard, qualité) ; le gameplay vient de /data |
+| `src/client/game/tournee.ts` | Tournée en cours : quartier, difficulté, compte à rebours du couvre-feu |
+| `src/client/game/mannequins.ts` | Créatures et colis provisoires (menu debug) |
+| `input.ts`, `assets.ts`, `physics.ts`, `street.ts`, `player.ts`, `pizza.ts`, `postfx.ts`, `hud.ts` | Clavier/souris, modèles, Rapier, la rue, le joueur FPS, la pizza, effets, interface |
 
 Ajouter `?debug` à l'adresse expose le jeu dans la console : `window.livreurs`
-(ex. `livreurs.player.teleport(0, 0, 10)`).
+(ex. `livreurs.teleport(0, 10)`).
 
 ## Ressources 3D
 
@@ -71,7 +72,8 @@ Ajouter `?debug` à l'adresse expose le jeu dans la console : `window.livreurs`
 | `npm run dev` | Vite (http://localhost:5173) + serveur Colyseus (port 2567), rechargement auto |
 | `npm run build` | `vite build` → `dist/client`, puis `tsc` → `dist/server` et `dist/shared` |
 | `npm start` | `node dist/server/index.js` : sert le jeu + Colyseus sur `process.env.PORT` (2567 par défaut) |
-| `npm run typecheck` | Vérification TypeScript du jeu et du serveur |
+| `npm run typecheck` | Vérification TypeScript du jeu, du serveur et des tests |
+| `npm test` | Tests automatiques de la logique (Vitest, dossier `tests/`) |
 
 Render : Build `npm install --include=dev && npm run build`, Start `npm start`, branche `main`.
 
@@ -98,17 +100,29 @@ Render : Build `npm install --include=dev && npm run build`, Start `npm start`, 
   `experimentalDecorators: true` et `useDefineForClassFields: false`, et `tsx` doit recevoir
   `--tsconfig tsconfig.server.json`.
 - Côté serveur (ESM Node), les imports relatifs finissent par `.js` (ex. `../shared/game.js`).
+- Écrans : ne jamais afficher/cacher un écran à la main, passer par `machine.aller(...)` ;
+  un nouveau passage entre écrans s'ajoute dans `core/ecrans.ts` (et son test).
+- La boucle 3D tourne seulement dans l'état `tournee` ; en pause (souris libérée), la physique est figée.
+- Le code 3D est chargé à la demande (`import("./game/Game")`) : ne pas l'importer directement
+  depuis `main.ts` (sinon le menu attend 5 Mo).
+- `localStorage` peut être interdit (navigation privée) : toujours passer par `core/sauvegarde.ts`.
+- Serveur : la page du jeu n'est renvoyée que pour les adresses sans extension ; un fichier absent = 404.
+- Pour arrêter un serveur de test, ne pas utiliser `pkill -f` avec un motif contenu dans sa propre commande.
 - Rester sur **Three 0.186.x** tant que `postprocessing` n'accepte pas plus récent (peer `< 0.187`),
   et sur **Colyseus 0.16**.
 
-## Règles de travail (DESIGN.md)
+## Règles de travail
 
-1. **Une petite étape à la fois.** Ne pas faire plusieurs fonctionnalités d'un coup.
-2. **Tester après chaque demande** : `npm run typecheck`, `npm run build`, puis jouer.
-   Si ça casse, décrire précisément ce qu'on voit et le message d'erreur.
-3. **Sauvegarder avec Git à chaque étape qui marche**, avec un message de commit clair.
-4. **Expliquer** les fichiers et choix quand on le demande (ou quand c'est nouveau).
-5. **Relire régulièrement** le projet pour repérer ce qui est fragile ou mal organisé.
+1. **Un jalon à la fois**, découpé en petites tâches. **Le jeu doit toujours rester lançable.**
+2. **Après chaque tâche** : `npm run typecheck`, `npm test`, `npm run build`, test dans le
+   navigateur, puis **commit Git avec un message clair**.
+3. **Tests automatiques** pour toute logique (pourboires, XP, difficulté…) dans `tests/`.
+4. **À la fin de chaque jalon** : mettre à jour `docs/ROADMAP.md`, puis donner à la porteuse
+   la **liste exacte de ce qu'elle doit tester en jouant**, et le **ZIP** du projet.
+5. **Expliquer simplement**, en français, ce qui est fait (la porteuse débute en code).
+6. **Relire régulièrement** le projet pour repérer ce qui est fragile ou mal organisé.
+7. Si ça casse : décrire précisément ce qu'on voit et le message d'erreur (F1 les liste).
 
-Conventions : code et commentaires en français pour ce qui est propre au jeu ; réglages dans
-`src/client/game/config.ts` ; ne jamais committer `node_modules`, `dist` ni `.env`.
+Conventions : code et commentaires en français pour ce qui est propre au jeu ; chiffres de gameplay
+dans `/data`, réglages techniques dans `src/client/game/config.ts` ; ne jamais committer
+`node_modules`, `dist` ni `.env`.

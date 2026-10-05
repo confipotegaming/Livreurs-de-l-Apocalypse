@@ -1,0 +1,28 @@
+{
+  "_aide": "XP et niveaux. XP pour passer du niveau N au niveau N+1 = xpNiveauBase × croissance^(N-1), arrondi. etoilesParNote = réputation gagnée selon la note. paliersQG = réputation nécessaire pour chaque amélioration du QG.",
+  "niveauMax": 30,
+  "xpNiveauBase": 200,
+  "croissance": 1.12,
+  "xp": {
+    "livraison": 50,
+    "reanimation": 40,
+    "objectif": 60,
+    "note": { "S": 300, "A": 200, "B": 120, "C": 60, "D": 20 }
+  },
+  "etoilesParNote": { "S": 5, "A": 4, "B": 3, "C": 2, "D": 1 },
+  "paliersQG": [
+    { "id": "garage", "nom": "Garage", "reputationRequise": 0 },
+    { "id": "atelier", "nom": "Atelier", "reputationRequise": 15 },
+    { "id": "cuisine", "nom": "Cuisine", "reputationRequise": 40 },
+    { "id": "garageVans", "nom": "Garage à vans", "reputationRequise": 80 },
+    { "id": "siege", "nom": "Siège social", "reputationRequise": 150 }
+  ],
+  "talents": {
+    "_aide": "3 branches, bonus légers (en %, cumulables jusqu'à rangMax).",
+    "branches": [
+      { "id": "porteur", "nom": "Porteur", "bonus": [ { "id": "force", "nom": "Bras costauds", "parRang": 5, "rangMax": 5 }, { "id": "endurance", "nom": "Souffle", "parRang": 8, "rangMax": 5 } ] },
+      { "id": "eclaireur", "nom": "Éclaireur", "bonus": [ { "id": "lampe", "nom": "Piles longue durée", "parRang": 8, "rangMax": 5 }, { "id": "discretion", "nom": "Semelles silencieuses", "parRang": 6, "rangMax": 5 } ] },
+      { "id": "baratineur", "nom": "Baratineur", "bonus": [ { "id": "pourboires", "nom": "Bagout", "parRang": 4, "rangMax": 5 }, { "id": "telephone", "nom": "Forfait illimité", "parRang": 10, "rangMax": 3 } ] }
+    ]
+  }
+}

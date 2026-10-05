@@ -1,0 +1,55 @@
+{
+  "_aide": "Les quartiers (niveaux). reputationRequise = étoiles cumulées pour le débloquer. dureeMinutes = durée avant le couvre-feu en difficulté Tranquille. commandesParJoueur = commandes de base par joueur.",
+  "quartiers": [
+    {
+      "id": "lilas",
+      "nom": "Les Lilas",
+      "description": "Quartier résidentiel calme. Enfin, calme le jour.",
+      "reputationRequise": 0,
+      "creatures": ["rodeur"],
+      "dureeMinutes": 12,
+      "commandesParJoueur": 3,
+      "creaturesParJoueur": 1
+    },
+    {
+      "id": "centre",
+      "nom": "Centre-ville",
+      "description": "Néons, ruelles et enseignes qui grésillent.",
+      "reputationRequise": 15,
+      "creatures": ["rodeur", "timide"],
+      "dureeMinutes": 14,
+      "commandesParJoueur": 3,
+      "creaturesParJoueur": 1.5
+    },
+    {
+      "id": "galeries",
+      "nom": "Galeries Saint-Néon",
+      "description": "Le centre commercial. Les soldes sont terminées, les monstres non.",
+      "reputationRequise": 40,
+      "creatures": ["rodeur", "timide", "essaim", "mimic"],
+      "dureeMinutes": 16,
+      "commandesParJoueur": 4,
+      "creaturesParJoueur": 2
+    },
+    {
+      "id": "port",
+      "nom": "Le Port",
+      "description": "Grues, conteneurs, et une voix qui vous appelle depuis le quai.",
+      "reputationRequise": 80,
+      "creatures": ["rodeur", "timide", "essaim", "mimic", "sirene"],
+      "dureeMinutes": 18,
+      "commandesParJoueur": 4,
+      "creaturesParJoueur": 2.5
+    },
+    {
+      "id": "hopital",
+      "nom": "Hôpital Saint-Néon",
+      "description": "Le final. Le Gros vous attend au sous-sol.",
+      "reputationRequise": 150,
+      "creatures": ["rodeur", "timide", "essaim", "mimic", "sirene", "gros"],
+      "dureeMinutes": 20,
+      "commandesParJoueur": 4,
+      "creaturesParJoueur": 3
+    }
+  ]
+}

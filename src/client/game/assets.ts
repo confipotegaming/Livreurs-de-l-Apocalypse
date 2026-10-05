@@ -55,22 +55,51 @@ export type ModelLibrary = Record<ModelName, THREE.Object3D>;
 
 const BASE_URL = "/models/";
 
-/** Télécharge tous les modèles. `onProgress` reçoit (chargés, total). */
-export async function loadModels(onProgress: (loaded: number, total: number) => void): Promise<ModelLibrary> {
+/** Résultat du chargement : les modèles, et la liste de ceux qui ont échoué. */
+export interface LoadReport {
+  models: ModelLibrary;
+  total: number;
+  failed: { name: ModelName; path: string; reason: string }[];
+}
+
+/**
+ * Télécharge tous les modèles. `onProgress` reçoit (chargés, total).
+ * Si un modèle ne se charge pas (fichier absent, mauvais chemin…), le jeu ne plante pas :
+ * on le remplace par une boîte rose bien visible, et on note l'erreur (affichée avec F1).
+ */
+export async function loadModels(onProgress: (loaded: number, total: number) => void): Promise<LoadReport> {
   const gltfLoader = new GLTFLoader();
   const entries = Object.entries(MODELS) as [ModelName, string][];
+  const failed: LoadReport["failed"] = [];
   let loaded = 0;
   onProgress(0, entries.length);
 
   const results = await Promise.all(
     entries.map(async ([name, path]) => {
-      const object = path.endsWith(".obj") ? await loadObj(path) : (await gltfLoader.loadAsync(BASE_URL + path)).scene;
-      prepare(object);
+      let object: THREE.Object3D;
+      try {
+        object = path.endsWith(".obj") ? await loadObj(path) : (await gltfLoader.loadAsync(BASE_URL + path)).scene;
+        prepare(object);
+      } catch (err) {
+        failed.push({ name, path: BASE_URL + path, reason: err instanceof Error ? err.message : String(err) });
+        object = placeholder();
+      }
       onProgress(++loaded, entries.length);
       return [name, object] as const;
     }),
   );
-  return Object.fromEntries(results) as ModelLibrary;
+  return { models: Object.fromEntries(results) as ModelLibrary, total: entries.length, failed };
+}
+
+/** Boîte rose de 1 m, à la place d'un modèle introuvable. */
+function placeholder(): THREE.Object3D {
+  const group = new THREE.Group();
+  const box = new THREE.Mesh(
+    new THREE.BoxGeometry(0.2, 0.2, 0.2).translate(0, 0.1, 0),
+    new THREE.MeshStandardMaterial({ color: 0xff00ff, emissive: 0x550055 }),
+  );
+  group.add(box);
+  return group;
 }
 
 async function loadObj(path: string): Promise<THREE.Object3D> {

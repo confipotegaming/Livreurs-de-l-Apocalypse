@@ -76,6 +76,25 @@ export class PizzaBox {
     return this.isTargeted(player) ? "pickup" : null;
   }
 
+  /** Remet la pizza à sa place de départ (nouvelle tournée). */
+  reset() {
+    const body = this.prop.body;
+    if (this.held) {
+      this.held = false;
+      body.setBodyType(RAPIER.RigidBodyType.Dynamic, true);
+      this.collider.setSensor(false);
+    }
+    body.setTranslation(this.spawn, true);
+    body.setRotation({ x: 0, y: 0, z: 0, w: 1 }, true);
+    body.setLinvel({ x: 0, y: 0, z: 0 }, true);
+    body.setAngvel({ x: 0, y: 0, z: 0 }, true);
+  }
+
+  /** Position de départ (pour le menu de debug). */
+  get spawnPosition(): THREE.Vector3 {
+    return this.spawn.clone();
+  }
+
   /** Vrai si le joueur regarde la pizza d'assez près. */
   private isTargeted(player: Player): boolean {
     const toPizza = this.prop.object.position.clone().sub(player.camera.position);

@@ -1,0 +1,11 @@
+{
+  "_aide": "Types de colis. pourboireBase en euros. porteursMin/Max = nombre de livreurs pour le porter. vitessePorteur = multiplicateur de vitesse de marche. refroidissementSecondes = temps pour passer de chaud à froid (0 = ne refroidit pas). bruitRayon = distance (m) à laquelle les créatures l'entendent (0 = silencieux).",
+  "colis": [
+    { "id": "pizza", "nom": "Pizza", "pourboireBase": 8, "porteursMin": 1, "porteursMax": 1, "vitessePorteur": 1, "refroidissementSecondes": 180, "fragile": false, "bruitRayon": 0, "vivant": false, "maudit": false },
+    { "id": "lourd", "nom": "Lourd", "pourboireBase": 30, "porteursMin": 2, "porteursMax": 4, "vitessePorteur": 0.55, "refroidissementSecondes": 0, "fragile": false, "bruitRayon": 0, "vivant": false, "maudit": false },
+    { "id": "fragile", "nom": "Fragile", "pourboireBase": 18, "porteursMin": 1, "porteursMax": 1, "vitessePorteur": 0.9, "refroidissementSecondes": 0, "fragile": true, "bruitRayon": 0, "vivant": false, "maudit": false },
+    { "id": "bruyant", "nom": "Bruyant", "pourboireBase": 15, "porteursMin": 1, "porteursMax": 1, "vitessePorteur": 1, "refroidissementSecondes": 0, "fragile": false, "bruitRayon": 15, "vivant": false, "maudit": false },
+    { "id": "vivant", "nom": "Vivant", "pourboireBase": 20, "porteursMin": 1, "porteursMax": 1, "vitessePorteur": 0.95, "refroidissementSecondes": 0, "fragile": false, "bruitRayon": 6, "vivant": true, "maudit": false },
+    { "id": "maudit", "nom": "Maudit", "pourboireBase": 80, "porteursMin": 1, "porteursMax": 1, "vitessePorteur": 0.9, "refroidissementSecondes": 0, "fragile": false, "bruitRayon": 30, "vivant": false, "maudit": true }
+  ]
+}

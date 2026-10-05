@@ -1,0 +1,17 @@
+{
+  "_aide": "Équipement (4 emplacements : lampe, transport, utilitaire1, utilitaire2). prix en euros de pourboires. niveauRequis = niveau de livreur minimum. portee en mètres, angle en degrés, batterieSecondes = durée d'éclairage continu.",
+  "objets": [
+    { "id": "torche", "nom": "Lampe torche", "categorie": "lampe", "prix": 0, "niveauRequis": 1, "portee": 30, "angle": 24, "batterieSecondes": 600, "mainsLibres": false },
+    { "id": "frontale", "nom": "Lampe frontale", "categorie": "lampe", "prix": 60, "niveauRequis": 2, "portee": 14, "angle": 30, "batterieSecondes": 900, "mainsLibres": true },
+    { "id": "longuePortee", "nom": "Lampe longue portée", "categorie": "lampe", "prix": 150, "niveauRequis": 6, "portee": 50, "angle": 14, "batterieSecondes": 400, "mainsLibres": false },
+    { "id": "uv", "nom": "Lampe UV", "categorie": "lampe", "prix": 220, "niveauRequis": 10, "portee": 20, "angle": 28, "batterieSecondes": 300, "mainsLibres": false },
+    { "id": "diable", "nom": "Diable", "categorie": "transport", "prix": 90, "niveauRequis": 3, "vitesseBonus": 0.2, "bruitRayon": 4 },
+    { "id": "chariot", "nom": "Chariot de supermarché", "categorie": "transport", "prix": 120, "niveauRequis": 5, "vitesseBonus": 0.35, "bruitRayon": 12 },
+    { "id": "sangles", "nom": "Sangles de déménageur", "categorie": "transport", "prix": 140, "niveauRequis": 8, "vitesseBonus": 0.25, "bruitRayon": 0 },
+    { "id": "leurre", "nom": "Leurre sonore", "categorie": "utilitaire", "prix": 25, "niveauRequis": 2, "dureeSecondes": 12, "bruitRayon": 20 },
+    { "id": "fusee", "nom": "Fusée éclairante", "categorie": "utilitaire", "prix": 30, "niveauRequis": 4, "dureeSecondes": 25, "portee": 15 },
+    { "id": "cadenas", "nom": "Cadenas", "categorie": "utilitaire", "prix": 35, "niveauRequis": 5, "dureeSecondes": 40 },
+    { "id": "trousse", "nom": "Trousse de réanimation", "categorie": "utilitaire", "prix": 50, "niveauRequis": 3, "reanimationBonus": 0.5 },
+    { "id": "sacIsotherme", "nom": "Sac isotherme", "categorie": "utilitaire", "prix": 45, "niveauRequis": 2, "refroidissementBonus": 1 }
+  ]
+}

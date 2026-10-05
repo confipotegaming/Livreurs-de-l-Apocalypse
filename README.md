@@ -1,21 +1,18 @@
 # Livreurs de l'Apocalypse
 
-Jeu coopératif d'horreur-comique, jouable dans le navigateur, pour 1 à 5 amis.
-Le cahier des charges complet est dans [`DESIGN.md`](DESIGN.md).
+Jeu coopératif d'horreur-comique, jouable dans le navigateur, pour 1 à 8 amis.
+La référence du jeu est la [**bible**](docs/BIBLE.md) ; les étapes sont dans la [**roadmap**](docs/ROADMAP.md).
 
-**Version actuelle : tranche visuelle 3D, en solo** (direction artistique façon *The Headliners*)
+**Version actuelle : jalon J0 terminé (fondations), en solo** — direction artistique façon *The Headliners*
 
-- une rue de nuit en 3D low-poly : immeubles, voitures abandonnées, lampadaires (dont un qui grésille
-  et deux en panne), néons colorés, brouillard ;
-- vue à la première personne : **ZQSD** (ou WASD) pour marcher, **souris** pour regarder,
-  **Maj** pour sprinter (jauge d'endurance) ;
-- une **lampe torche** qui projette des ombres (**F** pour l'allumer / l'éteindre) ;
-- une **boîte de pizza** : **E** pour la ramasser ou la poser, **clic droit** pour la lancer ;
-- des cônes de chantier qu'on peut renverser ;
-- post-traitement : bloom, grain, vignettage, légère aberration chromatique.
-
-Le multijoueur (salons à code de 4 lettres) reviendra à l'étape suivante : le serveur Colyseus est
-déjà prêt.
+- menu → **QG** (choix du quartier et de la difficulté) → **tournée** → **récap** → QG ;
+- une rue de nuit en 3D low-poly (Les Lilas, provisoire) : immeubles, voitures abandonnées,
+  lampadaires, néons, brouillard ; **compte à rebours du couvre-feu** ;
+- vue à la première personne : **ZQSD** (ou WASD), **souris**, **Maj** pour sprinter ;
+- **lampe torche** (**F**), **boîte de pizza** (**E** pour ramasser/poser, **clic droit** pour lancer) ;
+- **options** : sensibilité de la souris, champ de vision, volume, qualité graphique ;
+- **outils de debug** avec **F1** (ou **²**) ;
+- tous les chiffres du jeu dans le dossier [`data/`](data) (fichiers JSON modifiables).
 
 ---
 
@@ -47,20 +44,23 @@ npm start
 
 Puis ouvrez **http://localhost:2567**.
 
-### Comment tester la tranche visuelle
+### Comment tester
 
-1. Attendez la fin du chargement de la rue, puis cliquez sur **Commencer la tournée** :
-   la souris est « capturée » par le jeu.
-2. Regardez autour de vous avec la souris, marchez avec ZQSD, sprintez avec Maj.
-3. La pizza est posée sur la chaussée, à quelques pas devant vous, un peu à droite. Regardez-la de près :
-   le viseur devient orange et « E Ramasser la pizza » s'affiche. Appuyez sur **E**.
-4. **Clic droit** pour la lancer (elle part en tournant), ou **E** pour la reposer.
-   Essayez de la lancer sur les cônes de chantier, plus loin près de la camionnette en travers.
-5. **F** éteint la lampe : on ne voit plus que les lampadaires et les néons.
-6. **Échap** met en pause et libère la souris.
+1. Menu → **Jouer** → au QG, choisissez **Les Lilas** et une difficulté → **Partir en tournée**.
+2. À la fin du chargement, cliquez **C'est parti !** : la souris est « capturée » par le jeu.
+3. Marchez (ZQSD), sprintez (Maj), ramassez la pizza (E), lancez-la (clic droit), lampe (F).
+4. **Échap** : pause (Reprendre, Options, Abandonner la tournée → récap).
+5. **F1** (ou **²**) : panneau de debug (images/s, position, erreurs, téléportation, créatures…).
 
-En haut à droite, le compteur indique les **images par seconde** (objectif : 60). Si le PC n'arrive
-pas à suivre, le jeu baisse un peu la résolution tout seul.
+**Quelle version est en ligne ?** Elle est écrite en bas du menu (`version 1a2b3c4 · date`), dans F1,
+et sur l'adresse `/health` du site. Si ce n'est pas le dernier commit de `main`, Render n'a pas
+encore redéployé (onglet *Events* du service sur Render).
+
+### Rééquilibrer le jeu
+
+Modifiez un fichier de `data/` (ex. `data/difficultes.json`), enregistrez : avec `npm run dev`, le jeu
+se recharge tout seul. Lancez ensuite `npm test` : les tests vérifient que les règles tiennent toujours.
+Une erreur dans un fichier (créature inconnue, identifiant en double…) s'affiche aussi dans F1.
 
 > Conseil : utilisez Chrome, Edge ou Firefox à jour. Sur un PC portable, branchez le chargeur :
 > sur batterie, la carte graphique est souvent bridée.
@@ -93,32 +93,23 @@ Dans Render, onglet **Settings** du service, vérifiez :
 ## Organisation des fichiers
 
 ```
-DESIGN.md              Cahier des charges du jeu
+docs/BIBLE.md          LA référence du jeu (univers, boucle, quartiers, créatures, progression)
+docs/ROADMAP.md        Les jalons J0 à J7, ce qui est fait et ce qui reste
+docs/ARCHITECTURE.md   Comment le code est organisé
+DESIGN.md              Cahier des charges d'origine (les 4 piliers)
 CLAUDE.md              Résumé du projet et règles de travail pour l'IA
-render.yaml            Réglages Render
-package.json           Liste des bibliothèques et des commandes (dev, build, start)
-vite.config.ts         Réglages de Vite (outil qui compile le jeu)
-assets/
-  models/              Modèles 3D gratuits (Kenney, Quaternius)
-  LICENCES/            Licences des modèles (toutes CC0, domaine public)
+data/                  Tous les chiffres du jeu (JSON) : quartiers, créatures, colis, objets, XP…
+tests/                 Tests automatiques de la logique (npm test)
+assets/                Modèles 3D gratuits (Kenney, Quaternius) et leurs licences (CC0)
 src/
-  client/              Le jeu, qui tourne dans le navigateur
-    index.html         La page : écran titre + interface en jeu
-    style.css          L'apparence des menus
-    main.ts            Chargement, bouton « Commencer », pause
-    game/
-      Game.ts          Le chef d'orchestre : rendu, boucle de jeu
-      config.ts        Tous les réglages (vitesses, lampe, brouillard…)
-      street.ts        La rue : immeubles, voitures, lampadaires, néons
-      player.ts        Le livreur : déplacement, sprint, lampe torche
-      pizza.ts         La boîte de pizza : ramasser, poser, lancer
-      postfx.ts        Effets : bloom, grain, vignettage, aberration chromatique
-      physics.ts       Collisions (Rapier)
-      assets.ts        Chargement des modèles 3D
-      input.ts         Clavier et souris
-      hud.ts           Viseur, aides, endurance, images/s
+  client/              Le jeu, dans le navigateur
+    index.html         Les écrans (menu, QG, chargement, pause, récap, options) + debug
+    main.ts            Point d'entrée : passe d'un écran à l'autre
+    core/              Machine à états, options, sauvegarde locale, carnet d'erreurs
+    debug.ts           Panneau de debug (F1)
+    game/              La partie 3D : rue, joueur, pizza, lumière, physique, effets
   server/              Le serveur Node (sert le jeu + Colyseus pour le multijoueur)
-  shared/              Règles communes au jeu et au serveur
+  shared/              Règles du jeu (pourboires, XP…) communes au jeu et au serveur
 ```
 
 ## Commandes utiles
@@ -130,6 +121,7 @@ src/
 | `npm run build` | Compile le jeu et le serveur dans `dist/` |
 | `npm start` | Lance le serveur compilé (http://localhost:2567) |
 | `npm run typecheck` | Vérifie le code TypeScript sans rien lancer |
+| `npm test` | Lance les tests automatiques des règles du jeu |
 
 ## Crédits
 
