@@ -28,8 +28,25 @@
         <p id="lobby-error" class="error" role="alert"></p>
       </form>
 
-      <p class="help">ZQSD (ou WASD) pour marcher · la souris oriente la lampe</p>
+      <p class="help">De 1 à 5 joueurs · ZQSD (ou WASD) pour marcher · la souris oriente la lampe</p>
     </main>
+
+    <!-- Fenêtre d'explication montrée à celui ou celle qui vient de créer le salon -->
+    <div id="host-panel" class="overlay hidden">
+      <div class="card host-card">
+        <h2>Ton salon est prêt !</h2>
+        <p>Pour inviter tes amis, donne-leur ce code :</p>
+        <p id="host-code" class="big-code"></p>
+        <button id="host-copy" type="button">Copier le lien d'invitation</button>
+        <ol class="steps">
+          <li>Envoie le code ou le lien à tes amis (jusqu'à 5 joueurs en tout).</li>
+          <li>Ils ouvrent le jeu, tapent leur pseudo et le code, puis « Rejoindre ».</li>
+          <li>Pas besoin de les attendre : tu peux aussi jouer seul·e.</li>
+        </ol>
+        <p class="help">ZQSD (ou WASD) pour marcher · la souris oriente la lampe</p>
+        <button id="host-start" type="button" class="primary">Entrer dans la salle</button>
+      </div>
+    </div>
 
     <!-- Bandeau affiché pendant la partie -->
     <div id="hud" class="hud hidden">
@@ -37,7 +54,9 @@
         Salon <strong id="hud-code"></strong>
         <button id="copy-link" type="button" title="Copier le lien d'invitation">Copier le lien</button>
       </div>
+      <p class="hud-title">Livreurs <strong id="hud-count"></strong></p>
       <ul id="hud-players" class="hud-players"></ul>
+      <p class="hud-help">ZQSD : marcher · souris : lampe</p>
     </div>
     <p id="disconnected" class="disconnected hidden">Connexion perdue. <a href="/">Revenir à l'accueil</a></p>
 

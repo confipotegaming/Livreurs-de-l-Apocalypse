@@ -45,7 +45,7 @@ codeInput.addEventListener("input", () => {
 });
 
 createBtn.addEventListener("click", () => {
-  connect(() => client.create<GameStateView>(ROOM_NAME, { name: playerName() }));
+  connect(() => client.create<GameStateView>(ROOM_NAME, { name: playerName() }), true);
 });
 
 form.addEventListener("submit", (event) => {
@@ -63,7 +63,7 @@ function playerName(): string {
   return nameInput.value.trim();
 }
 
-async function connect(open: () => Promise<Room<GameStateView>>) {
+async function connect(open: () => Promise<Room<GameStateView>>, isHost = false) {
   if (!playerName()) {
     showError("Choisis d'abord un pseudo.");
     nameInput.focus();
@@ -74,7 +74,7 @@ async function connect(open: () => Promise<Room<GameStateView>>) {
   showError("");
   try {
     const room = await open();
-    startGame(room);
+    startGame(room, isHost);
   } catch (err) {
     showError(describeError(err));
     setBusy(false);
@@ -89,7 +89,7 @@ function describeError(err: unknown): string {
   return `Erreur : ${message}`;
 }
 
-function startGame(room: Room<GameStateView>) {
+function startGame(room: Room<GameStateView>, isHost: boolean) {
   lobby.classList.add("hidden");
   $("hud").classList.remove("hidden");
   $("hud-code").textContent = room.roomId;
@@ -97,16 +97,18 @@ function startGame(room: Room<GameStateView>) {
   // Le lien d'invitation est aussi mis dans la barre d'adresse.
   const inviteUrl = `${location.origin}/?salon=${room.roomId}`;
   history.replaceState(null, "", `/?salon=${room.roomId}`);
-  const copyBtn = $<HTMLButtonElement>("copy-link");
-  copyBtn.addEventListener("click", async () => {
-    try {
-      await navigator.clipboard.writeText(inviteUrl);
-      copyBtn.textContent = "Lien copié !";
-    } catch {
-      copyBtn.textContent = inviteUrl;
-    }
-    setTimeout(() => (copyBtn.textContent = "Copier le lien"), 2000);
-  });
+  setupCopyButton($<HTMLButtonElement>("copy-link"), inviteUrl);
+
+  // Celui ou celle qui crée le salon voit d'abord une fenêtre qui explique comment inviter.
+  if (isHost) {
+    const panel = $("host-panel");
+    $("host-code").textContent = room.roomId;
+    setupCopyButton($<HTMLButtonElement>("host-copy"), inviteUrl);
+    panel.classList.remove("hidden");
+    const startBtn = $<HTMLButtonElement>("host-start");
+    startBtn.addEventListener("click", () => panel.classList.add("hidden"));
+    startBtn.focus();
+  }
 
   room.onLeave((code) => {
     // 1000 = départ volontaire ; tout le reste = connexion perdue.
@@ -119,6 +121,20 @@ function startGame(room: Room<GameStateView>) {
     backgroundColor: "#000000",
     scale: { mode: Phaser.Scale.RESIZE, width: window.innerWidth, height: window.innerHeight },
     scene: [new RoomScene(room)],
+  });
+}
+
+/** Un bouton qui copie le lien d'invitation (et l'affiche si la copie est impossible). */
+function setupCopyButton(button: HTMLButtonElement, inviteUrl: string) {
+  const label = button.textContent;
+  button.addEventListener("click", async () => {
+    try {
+      await navigator.clipboard.writeText(inviteUrl);
+      button.textContent = "Lien copié !";
+    } catch {
+      button.textContent = inviteUrl;
+    }
+    setTimeout(() => (button.textContent = label), 2000);
   });
 }
 

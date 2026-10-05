@@ -6,7 +6,7 @@
 export const ROOM_NAME = "salle";
 
 /** Nombre maximum de joueurs par salon. */
-export const MAX_PLAYERS = 8;
+export const MAX_PLAYERS = 5;
 
 /** Le serveur calcule le jeu 20 fois par seconde. */
 export const SERVER_TICK_MS = 1000 / 20;
@@ -33,7 +33,7 @@ export const LAMP_HALF_ANGLE = Math.PI / 6; // 30° de chaque côté = 60° au t
 
 /** Couleurs attribuées aux livreurs (une par joueur). */
 export const PLAYER_COLORS = [
-  0xff8a00, 0x2ec4ff, 0xff4d8d, 0x7bdc3a, 0xffd23f, 0xb07cff, 0x00e0b0, 0xff5a3c,
+  0xff8a00, 0x2ec4ff, 0xff4d8d, 0x7bdc3a, 0xb07cff,
 ];
 
 export interface Rect {

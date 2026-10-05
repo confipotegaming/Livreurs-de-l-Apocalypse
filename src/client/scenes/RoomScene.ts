@@ -4,6 +4,7 @@ import {
   INPUT_STEP_MS,
   LAMP_HALF_ANGLE,
   LAMP_RANGE,
+  MAX_PLAYERS,
   OBSTACLES,
   PLAYER_RADIUS,
   ROOM_HEIGHT,
@@ -357,6 +358,8 @@ export class RoomScene extends Phaser.Scene {
   private refreshPlayerList() {
     const list = document.getElementById("hud-players");
     if (!list) return;
+    const count = document.getElementById("hud-count");
+    if (count) count.textContent = `${this.room.state.players.size}/${MAX_PLAYERS}`;
     list.innerHTML = "";
     this.room.state.players.forEach((player, sessionId) => {
       const li = document.createElement("li");
