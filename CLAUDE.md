@@ -2,7 +2,7 @@
 
 ## Le projet
 
-Jeu coop d'horreur-comique dans le navigateur (5 à 8 amis) : des livreurs de nuit livrent des
+Jeu coop d'horreur-comique dans le navigateur (1 à 5 amis) : des livreurs de nuit livrent des
 commandes dans une ville envahie de créatures. Le cahier des charges complet est dans
 `DESIGN.md` : **le lire avant toute nouvelle fonctionnalité**, et vérifier que l'idée sert au
 moins un des 4 piliers.
@@ -15,7 +15,8 @@ sans jargon inutile.
 - [x] Étape 1 — Prototype solo : salle sombre vue du dessus, déplacement ZQSD, lampe à la souris
       (cône avec ombres portées par les meubles).
 - [x] Étape 2 — Multijoueur : écran d'accueil (pseudo, créer / rejoindre un salon avec un code de
-      4 lettres ou un lien `?salon=ABCD`), jusqu'à 8 joueurs qui se voient bouger.
+      4 lettres ou un lien `?salon=ABCD`), jusqu'à 5 joueurs qui se voient bouger.
+      L'hôte voit d'abord une fenêtre qui explique comment inviter ; le bandeau affiche « Livreurs 2/5 ».
 - [ ] Étape 3 — Le cœur du jeu : commandes, porter et lancer des colis, pourboires, une créature, mort.
 - [ ] Étapes 4 à 7 : voir `DESIGN.md`.
 

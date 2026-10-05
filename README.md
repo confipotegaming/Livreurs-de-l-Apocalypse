@@ -1,6 +1,6 @@
 # Livreurs de l'Apocalypse
 
-Jeu coopératif d'horreur-comique, jouable dans le navigateur, pour 1 à 8 amis.
+Jeu coopératif d'horreur-comique, jouable dans le navigateur, pour 1 à 5 amis.
 Le cahier des charges complet est dans [`DESIGN.md`](DESIGN.md).
 
 **Version actuelle : étapes 1 et 2 de la feuille de route**
@@ -9,7 +9,7 @@ Le cahier des charges complet est dans [`DESIGN.md`](DESIGN.md).
 - un livreur qui se déplace en **ZQSD** (ou WASD, ou les flèches) ;
 - une lampe qui suit la **souris** et éclaire un cône (les meubles projettent de l'ombre) ;
 - un écran d'accueil : on choisit un pseudo, puis on **crée** un salon (code de 4 lettres) ou on en **rejoint** un ;
-- jusqu'à 8 joueurs par salon, chacun voit les autres bouger et éclairer.
+- jusqu'à 5 joueurs par salon, chacun voit les autres bouger et éclairer.
 
 Tout est dessiné avec des formes simples : aucune image ni son externe pour l'instant.
 
