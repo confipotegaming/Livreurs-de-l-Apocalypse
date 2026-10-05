@@ -1,149 +1,67 @@
 import "./style.css";
-import Phaser from "phaser";
-import { Client, type Room } from "colyseus.js";
-import { MAX_PLAYERS, ROOM_NAME, normalizeRoomCode } from "../shared/game";
-import { RoomScene } from "./scenes/RoomScene";
-import type { GameStateView } from "./types";
+import { Game } from "./game/Game";
 
 // Point d'entrée du jeu dans le navigateur :
-// 1. on affiche l'écran d'accueil (pseudo + code de salon) ;
-// 2. on se connecte au serveur Colyseus ;
-// 3. on lance Phaser avec la scène de la salle.
+// 1. on charge la rue (modèles 3D + moteur physique) en affichant la progression ;
+// 2. au clic sur "Commencer", le jeu capture la souris (pointer lock) ;
+// 3. Échap libère la souris et affiche la pause.
 
 const $ = <T extends HTMLElement>(id: string) => document.getElementById(id) as T;
 
-const lobby = $<HTMLElement>("lobby");
-const form = $<HTMLFormElement>("lobby-form");
-const nameInput = $<HTMLInputElement>("name");
-const codeInput = $<HTMLInputElement>("code");
-const createBtn = $<HTMLButtonElement>("create-btn");
-const joinBtn = $<HTMLButtonElement>("join-btn");
-const errorText = $<HTMLParagraphElement>("lobby-error");
+const menu = $("menu");
+const status = $("menu-status");
+const progressFill = $("progress-fill");
+const playBtn = $<HTMLButtonElement>("play-btn");
+const errorText = $("menu-error");
 
-/**
- * Adresse du serveur multijoueur.
- * - En développement (npm run dev), Vite tourne sur le port 5173 et le serveur sur 2567.
- * - En production (Render), le jeu et le serveur sont à la même adresse.
- */
-function serverUrl(): string {
-  const protocol = location.protocol === "https:" ? "wss" : "ws";
-  if (import.meta.env.DEV) return `${protocol}://${location.hostname}:2567`;
-  return `${protocol}://${location.host}`;
-}
-
-const client = new Client(serverUrl());
-
-// Pseudo mémorisé dans le navigateur, et code de salon lu dans le lien (?salon=ABCD).
-nameInput.value = safeStorageGet("pseudo") ?? "";
-codeInput.value = normalizeRoomCode(new URLSearchParams(location.search).get("salon") ?? "");
-if (!nameInput.value) nameInput.focus();
-else if (codeInput.value) joinBtn.focus();
-else createBtn.focus();
-
-codeInput.addEventListener("input", () => {
-  codeInput.value = normalizeRoomCode(codeInput.value);
-});
-
-createBtn.addEventListener("click", () => {
-  connect(() => client.create<GameStateView>(ROOM_NAME, { name: playerName() }));
-});
-
-form.addEventListener("submit", (event) => {
-  event.preventDefault();
-  const code = normalizeRoomCode(codeInput.value);
-  if (code.length !== 4) {
-    showError("Le code du salon fait 4 lettres.");
-    codeInput.focus();
-    return;
-  }
-  connect(() => client.joinById<GameStateView>(code, { name: playerName() }));
-});
-
-function playerName(): string {
-  return nameInput.value.trim();
-}
-
-async function connect(open: () => Promise<Room<GameStateView>>) {
-  if (!playerName()) {
-    showError("Choisis d'abord un pseudo.");
-    nameInput.focus();
-    return;
-  }
-  safeStorageSet("pseudo", playerName());
-  setBusy(true);
-  showError("");
+async function boot() {
+  let game: Game;
   try {
-    const room = await open();
-    startGame(room);
+    game = await Game.create($("game"), (loaded, total) => {
+      progressFill.style.width = `${Math.round((loaded / total) * 100)}%`;
+      status.textContent = `Chargement de la rue… ${loaded}/${total}`;
+    });
   } catch (err) {
-    showError(describeError(err));
-    setBusy(false);
+    console.error(err);
+    status.textContent = "Impossible de charger le jeu.";
+    errorText.textContent = err instanceof Error ? err.message : String(err);
+    return;
   }
-}
 
-function describeError(err: unknown): string {
-  const message = err instanceof Error ? err.message : String(err);
-  if (/not found|invalid/i.test(message)) return "Salon introuvable. Vérifie le code.";
-  if (/locked|full/i.test(message)) return `Salon complet (${MAX_PLAYERS} joueurs maximum).`;
-  if (/fetch|network|ECONNREFUSED|offline/i.test(message)) return "Impossible de joindre le serveur.";
-  return `Erreur : ${message}`;
-}
+  // Outil de test : ajouter ?debug à l'adresse pour accéder au jeu depuis la console (window.livreurs).
+  if (new URLSearchParams(location.search).has("debug")) {
+    (window as unknown as { livreurs: Game }).livreurs = game;
+  }
 
-function startGame(room: Room<GameStateView>) {
-  lobby.classList.add("hidden");
-  $("hud").classList.remove("hidden");
-  $("hud-code").textContent = room.roomId;
+  game.start();
+  status.textContent = "La rue est prête. Ta pizza t'attend.";
+  playBtn.disabled = false;
+  playBtn.focus();
 
-  // Le lien d'invitation est aussi mis dans la barre d'adresse.
-  const inviteUrl = `${location.origin}/?salon=${room.roomId}`;
-  history.replaceState(null, "", `/?salon=${room.roomId}`);
-  const copyBtn = $<HTMLButtonElement>("copy-link");
-  copyBtn.addEventListener("click", async () => {
+  const canvas = game.renderer.domElement;
+  const lockPointer = async () => {
+    errorText.textContent = "";
     try {
-      await navigator.clipboard.writeText(inviteUrl);
-      copyBtn.textContent = "Lien copié !";
+      await canvas.requestPointerLock();
     } catch {
-      copyBtn.textContent = inviteUrl;
+      // Le navigateur refuse si on recapture trop vite après Échap : il suffit de recliquer.
+      errorText.textContent = "Clique encore une fois pour reprendre.";
     }
-    setTimeout(() => (copyBtn.textContent = "Copier le lien"), 2000);
+  };
+  playBtn.addEventListener("click", lockPointer);
+  menu.addEventListener("click", (e) => {
+    if (!playBtn.disabled && e.target === menu) lockPointer();
   });
 
-  room.onLeave((code) => {
-    // 1000 = départ volontaire ; tout le reste = connexion perdue.
-    if (code !== 1000) $("disconnected").classList.remove("hidden");
-  });
-
-  new Phaser.Game({
-    type: Phaser.AUTO,
-    parent: "game",
-    backgroundColor: "#000000",
-    scale: { mode: Phaser.Scale.RESIZE, width: window.innerWidth, height: window.innerHeight },
-    scene: [new RoomScene(room)],
+  document.addEventListener("pointerlockchange", () => {
+    const playing = document.pointerLockElement === canvas;
+    menu.classList.toggle("hidden", playing);
+    game.hud.show(playing);
+    if (!playing) {
+      status.textContent = "Pause";
+      playBtn.textContent = "Reprendre la tournée";
+    }
   });
 }
 
-function setBusy(busy: boolean) {
-  createBtn.disabled = busy;
-  joinBtn.disabled = busy;
-}
-
-function showError(message: string) {
-  errorText.textContent = message;
-}
-
-// localStorage peut être bloqué (navigation privée) : on ne plante jamais pour ça.
-function safeStorageGet(key: string): string | null {
-  try {
-    return localStorage.getItem(key);
-  } catch {
-    return null;
-  }
-}
-
-function safeStorageSet(key: string, value: string) {
-  try {
-    localStorage.setItem(key, value);
-  } catch {
-    /* tant pis */
-  }
-}
+boot();

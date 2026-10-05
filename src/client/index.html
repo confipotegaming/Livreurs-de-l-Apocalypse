@@ -6,42 +6,40 @@
     <title>Livreurs de l'Apocalypse</title>
   </head>
   <body>
-    <!-- Écran d'accueil : pseudo + créer ou rejoindre un salon -->
-    <main id="lobby" class="lobby">
+    <div id="game"></div>
+
+    <!-- Écran titre / pause -->
+    <main id="menu" class="menu">
       <h1>Livreurs<br /><span>de l'Apocalypse</span></h1>
       <p class="tagline">Livrer la pizza. Ne pas mourir. Dans cet ordre si possible.</p>
 
-      <form id="lobby-form" class="card" autocomplete="off">
-        <label for="name">Ton pseudo</label>
-        <input id="name" maxlength="16" placeholder="Kevin" required />
+      <div class="card">
+        <p id="menu-status" class="status">Chargement de la rue…</p>
+        <div class="progress"><div id="progress-fill"></div></div>
+        <button id="play-btn" class="primary" type="button" disabled>Commencer la tournée</button>
 
-        <button type="button" id="create-btn" class="primary">Créer un salon</button>
-
-        <div class="separator"><span>ou</span></div>
-
-        <label for="code">Code du salon</label>
-        <div class="join-row">
-          <input id="code" maxlength="4" placeholder="ABCD" class="code-input" />
-          <button type="submit" id="join-btn">Rejoindre</button>
-        </div>
-
-        <p id="lobby-error" class="error" role="alert"></p>
-      </form>
-
-      <p class="help">ZQSD (ou WASD) pour marcher · la souris oriente la lampe</p>
+        <ul class="controls">
+          <li><kbd>Z</kbd><kbd>Q</kbd><kbd>S</kbd><kbd>D</kbd> Se déplacer</li>
+          <li><kbd>Souris</kbd> Regarder</li>
+          <li><kbd>Maj</kbd> Sprinter</li>
+          <li><kbd>E</kbd> Ramasser / poser la pizza</li>
+          <li><kbd>Clic droit</kbd> Lancer la pizza</li>
+          <li><kbd>F</kbd> Allumer / éteindre la lampe</li>
+          <li><kbd>Échap</kbd> Pause</li>
+        </ul>
+        <p id="menu-error" class="error" role="alert"></p>
+      </div>
+      <p class="credits">Modèles 3D : Kenney et Quaternius (CC0) — <a href="/LICENCES/README.md" target="_blank">licences</a></p>
     </main>
 
-    <!-- Bandeau affiché pendant la partie -->
+    <!-- Interface en jeu -->
     <div id="hud" class="hud hidden">
-      <div class="hud-code">
-        Salon <strong id="hud-code"></strong>
-        <button id="copy-link" type="button" title="Copier le lien d'invitation">Copier le lien</button>
-      </div>
-      <ul id="hud-players" class="hud-players"></ul>
+      <div id="crosshair" class="crosshair"></div>
+      <p id="hint" class="hint"></p>
+      <div id="stamina" class="stamina hidden"><div id="stamina-fill"></div></div>
+      <p id="fps" class="fps"></p>
     </div>
-    <p id="disconnected" class="disconnected hidden">Connexion perdue. <a href="/">Revenir à l'accueil</a></p>
 
-    <div id="game"></div>
     <script type="module" src="./main.ts"></script>
   </body>
 </html>
