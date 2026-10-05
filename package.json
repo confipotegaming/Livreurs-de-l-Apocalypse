@@ -1,0 +1,36 @@
+{
+  "name": "livreurs-de-l-apocalypse",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Jeu coop d'horreur-comique dans le navigateur (Phaser 3 + Colyseus)",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n serveur,jeu -c yellow,cyan \"npm:dev:server\" \"npm:dev:client\"",
+    "dev:server": "tsx watch --tsconfig tsconfig.server.json src/server/index.ts",
+    "dev:client": "vite",
+    "build": "npm run build:client && npm run build:server",
+    "build:client": "vite build",
+    "build:server": "tsc -p tsconfig.server.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p tsconfig.server.json --noEmit",
+    "start": "node dist/server/index.js"
+  },
+  "dependencies": {
+    "@colyseus/core": "^0.16.26",
+    "@colyseus/schema": "^3.0.76",
+    "@colyseus/ws-transport": "^0.16.5",
+    "express": "^5.2.1"
+  },
+  "devDependencies": {
+    "@types/express": "^5.0.6",
+    "@types/node": "^22.20.5",
+    "colyseus.js": "^0.16.22",
+    "concurrently": "^9.2.4",
+    "phaser": "^3.90.0",
+    "tsx": "^4.23.15",
+    "typescript": "~5.9",
+    "vite": "^7.3.6"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  // Configuration TypeScript pour le SERVEUR (Node.js).
+  // Compile src/server et src/shared vers dist/server et dist/shared.
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "rootDir": "src",
+    "outDir": "dist",
+    "strict": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "forceConsistentCasingInFileNames": true,
+    // Nécessaires pour les "@type(...)" de Colyseus (schéma de l'état du jeu).
+    "experimentalDecorators": true,
+    "useDefineForClassFields": false
+  },
+  "include": ["src/server", "src/shared"]
+}

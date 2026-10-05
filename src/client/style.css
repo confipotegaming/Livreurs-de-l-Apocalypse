@@ -1,0 +1,232 @@
+:root {
+  --bg: #07070a;
+  --card: #15151c;
+  --text: #f3efe6;
+  --muted: #8e8a99;
+  --accent: #ff8a00;
+  --accent-dark: #c96d00;
+  --danger: #ff5a5a;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  background: var(--bg);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+}
+
+#game {
+  position: fixed;
+  inset: 0;
+}
+
+.hidden {
+  display: none !important;
+}
+
+/* ---------- Écran d'accueil ---------- */
+.lobby {
+  position: fixed;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 16px;
+  background: radial-gradient(circle at 50% 30%, #2a1a08 0%, var(--bg) 60%);
+}
+
+.lobby h1 {
+  margin: 0;
+  text-align: center;
+  font-size: clamp(2rem, 6vw, 3.5rem);
+  line-height: 1;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  text-shadow: 0 0 24px rgba(255, 138, 0, 0.45);
+}
+
+.lobby h1 span {
+  font-size: 0.55em;
+  color: var(--text);
+}
+
+.tagline,
+.help {
+  margin: 0;
+  color: var(--muted);
+  text-align: center;
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(360px, 100%);
+  padding: 24px;
+  background: var(--card);
+  border: 2px solid #26262f;
+  border-radius: 14px;
+}
+
+label {
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+
+input {
+  padding: 10px 12px;
+  font-size: 1rem;
+  color: var(--text);
+  background: #0c0c11;
+  border: 2px solid #2c2c36;
+  border-radius: 8px;
+  outline: none;
+}
+
+input:focus {
+  border-color: var(--accent);
+}
+
+.code-input {
+  flex: 1;
+  min-width: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.3em;
+  font-weight: 700;
+}
+
+.join-row {
+  display: flex;
+  gap: 8px;
+}
+
+button {
+  padding: 10px 14px;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  background: #2c2c36;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover:not(:disabled) {
+  background: #3a3a46;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+button.primary {
+  margin-top: 8px;
+  color: #1a0f00;
+  background: var(--accent);
+}
+
+button.primary:hover:not(:disabled) {
+  background: var(--accent-dark);
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  color: var(--muted);
+  font-size: 0.85rem;
+}
+
+.separator::before,
+.separator::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #2c2c36;
+}
+
+.error {
+  min-height: 1.2em;
+  margin: 4px 0 0;
+  color: var(--danger);
+  font-size: 0.9rem;
+}
+
+/* ---------- Bandeau en jeu ---------- */
+.hud {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 10px 14px;
+  max-width: calc(100vw - 24px);
+  background: rgba(10, 10, 14, 0.75);
+  border: 1px solid #2c2c36;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  pointer-events: auto;
+}
+
+.hud-code strong {
+  margin: 0 6px;
+  color: var(--accent);
+  font-size: 1.2rem;
+  letter-spacing: 0.2em;
+}
+
+.hud-code button {
+  padding: 4px 8px;
+  font-size: 0.8rem;
+}
+
+.hud-players {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.hud-players li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.hud-players .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.disconnected {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 20;
+  transform: translate(-50%, -50%);
+  margin: 0;
+  padding: 16px 20px;
+  background: var(--card);
+  border: 2px solid var(--danger);
+  border-radius: 10px;
+}
+
+.disconnected a {
+  color: var(--accent);
+}

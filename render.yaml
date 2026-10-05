@@ -1,0 +1,16 @@
+# Configuration Render ("Blueprint").
+# Si votre Web Service existe déjà, Render n'utilise ce fichier que si vous passez par
+# "New > Blueprint". Sinon, recopiez simplement ces valeurs dans les réglages du service.
+services:
+  - type: web
+    name: livreurs-de-l-apocalypse
+    runtime: node
+    plan: free
+    # --include=dev : installe aussi Vite et TypeScript, nécessaires pour le build.
+    buildCommand: npm install --include=dev && npm run build
+    startCommand: npm start
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: NODE_VERSION
+        value: "22"

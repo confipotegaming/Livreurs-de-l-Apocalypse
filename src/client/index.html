@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Livreurs de l'Apocalypse</title>
+  </head>
+  <body>
+    <!-- Écran d'accueil : pseudo + créer ou rejoindre un salon -->
+    <main id="lobby" class="lobby">
+      <h1>Livreurs<br /><span>de l'Apocalypse</span></h1>
+      <p class="tagline">Livrer la pizza. Ne pas mourir. Dans cet ordre si possible.</p>
+
+      <form id="lobby-form" class="card" autocomplete="off">
+        <label for="name">Ton pseudo</label>
+        <input id="name" maxlength="16" placeholder="Kevin" required />
+
+        <button type="button" id="create-btn" class="primary">Créer un salon</button>
+
+        <div class="separator"><span>ou</span></div>
+
+        <label for="code">Code du salon</label>
+        <div class="join-row">
+          <input id="code" maxlength="4" placeholder="ABCD" class="code-input" />
+          <button type="submit" id="join-btn">Rejoindre</button>
+        </div>
+
+        <p id="lobby-error" class="error" role="alert"></p>
+      </form>
+
+      <p class="help">ZQSD (ou WASD) pour marcher · la souris oriente la lampe</p>
+    </main>
+
+    <!-- Bandeau affiché pendant la partie -->
+    <div id="hud" class="hud hidden">
+      <div class="hud-code">
+        Salon <strong id="hud-code"></strong>
+        <button id="copy-link" type="button" title="Copier le lien d'invitation">Copier le lien</button>
+      </div>
+      <ul id="hud-players" class="hud-players"></ul>
+    </div>
+    <p id="disconnected" class="disconnected hidden">Connexion perdue. <a href="/">Revenir à l'accueil</a></p>
+
+    <div id="game"></div>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>
