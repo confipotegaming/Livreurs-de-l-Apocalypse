@@ -1,6 +1,6 @@
 # Livreurs de l'Apocalypse
 
-Jeu coopératif d'horreur-comique, jouable dans le navigateur, pour 1 à 8 amis.
+Jeu coopératif d'horreur-comique, jouable dans le navigateur, pour 1 à 5 amis.
 Le cahier des charges complet est dans [`DESIGN.md`](DESIGN.md).
 
 **Version actuelle : tranche visuelle 3D, en solo** (direction artistique façon *The Headliners*)

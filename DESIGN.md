@@ -9,7 +9,7 @@ Oct 5, 2026 · @Elisa
 
 ## Concept
 
-LIVREURS DE L'APOCALYPSE est un jeu coop d'horreur-comique pour 5 à 8 amis, jouable dans le navigateur : une équipe de livreurs de nuit doit livrer des commandes dans une ville envahie de créatures, avant que tout refroidisse, se casse ou se fasse dévorer.
+LIVREURS DE L'APOCALYPSE est un jeu coop d'horreur-comique pour 1 à 5 amis, jouable dans le navigateur : une équipe de livreurs de nuit doit livrer des commandes dans une ville envahie de créatures, avant que tout refroidisse, se casse ou se fasse dévorer.
 
 **Pitch en une phrase** : les clients barricadés paient très cher leurs livraisons — encore faut-il traverser la ville à pied, dans le noir, avec un frigo sur le dos.
 
@@ -29,7 +29,7 @@ Le jeu vise un groupe d'amis fixe, pas le grand public : priorité au fun entre 
 | --- | --- |
 | Plateforme | Navigateur web sur PC (Chrome, Firefox, Edge), aucune installation |
 | Contrôles | Clavier + souris uniquement |
-| Joueurs | 1 à 8 par partie, conçu pour 5 à 8 |
+| Joueurs | 1 à 5 par partie |
 | Mode | 100 % coopératif contre le jeu |
 | Durée d'une tournée | 12 à 20 minutes |
 | Rejoindre | Un lien ou un code de salon de 4 lettres, sans création de compte |
@@ -180,7 +180,7 @@ L'ambiance mélange vraie tension et humour absurde : une ville de nuit inquiét
 | --- | --- | --- |
 | Difficulté à coder avec une IA | Faible | Plus élevée (physique, caméra, animations 3D) |
 | Ressources graphiques gratuites | Très nombreuses | Nombreuses en low-poly (Kenney, Quaternius) |
-| Performances navigateur à 8 joueurs | Excellentes | À surveiller : objectif 60 images/s sur un PC portable moyen |
+| Performances navigateur à 5 joueurs | Excellentes | À surveiller : objectif 60 images/s sur un PC portable moyen |
 | Peur ressentie | Bonne grâce à la lumière | Très forte |
 | Temps avant une première version jouable | Quelques semaines | Plus long |
 
@@ -206,7 +206,7 @@ Ces outils sont très répandus, donc une IA les connaît bien et produit du cod
 
 ## Multijoueur et réseau
 
-Le serveur décide de tout (positions des créatures, loot, pourboires gagnés) et les navigateurs affichent ce qu'il envoie : c'est plus simple à garder cohérent pour 8 joueurs.
+Le serveur décide de tout (positions des créatures, loot, pourboires gagnés) et les navigateurs affichent ce qu'il envoie : c'est plus simple à garder cohérent pour 5 joueurs.
 
 - **Salons** : un joueur crée un salon, reçoit un code de 4 lettres et un lien ; les autres rejoignent en un clic. Le créateur est le chef et lance la partie.
 - **Lobby / QG** : tous les joueurs du salon se retrouvent au QG, se déplacent librement, s'équipent, se customisent et votent pour le quartier.
@@ -221,7 +221,7 @@ La première version jouable (MVP) doit tenir en une seule soirée de test entre
 
 **Contenu du MVP**
 
-- [ ] Salon avec code, jusqu'à 8 joueurs
+- [ ] Salon avec code, jusqu'à 5 joueurs
 - [ ] QG simple : choisir sa couleur et 1 chapeau, acheter 4 objets
 - [ ] 1 map (quartier résidentiel) faite de rues et bâtiments assemblés aléatoirement
 - [ ] Lampe, obscurité, commandes à récupérer et livrer : pizza, colis lourd, colis fragile

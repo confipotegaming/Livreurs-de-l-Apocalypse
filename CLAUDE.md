@@ -2,7 +2,7 @@
 
 ## Le projet
 
-Jeu coop d'horreur-comique dans le navigateur (5 à 8 amis) : des livreurs de nuit livrent des
+Jeu coop d'horreur-comique dans le navigateur (1 à 5 amis) : des livreurs de nuit livrent des
 commandes dans une ville envahie de créatures. Le cahier des charges complet est dans
 `DESIGN.md` : **le lire avant toute nouvelle fonctionnalité**, et vérifier que l'idée sert au
 moins un des 4 piliers.
@@ -18,7 +18,8 @@ post-traitement (bloom, grain, vignettage, légère aberration chromatique).
 
 ## Où on en est
 
-- [x] Prototype 2D (Phaser) + multijoueur à deux onglets — **abandonné** (dans l'historique Git).
+- [x] Prototype 2D (Phaser) + multijoueur à deux onglets, salons de 1 à 5 joueurs avec fenêtre
+      d'explication pour l'hôte — **abandonné** (dans l'historique Git ; à reprendre en 3D).
 - [x] Tranche visuelle 3D **solo** : une rue de nuit (immeubles, voitures abandonnées, 6 lampadaires
       dont 1 qui grésille et 2 en panne, 4 néons), vue FPS, ZQSD + souris (pointer lock), Maj pour
       sprinter (endurance), F pour la lampe, une boîte de pizza à ramasser (E) et lancer (clic droit),
