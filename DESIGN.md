@@ -1,5 +1,9 @@
 # Cahier des charges — Jeu coop web (titre provisoire : LIVREURS DE L'APOCALYPSE)
 
+> **Depuis le 5 oct. 2026, la référence du jeu est [`docs/BIBLE.md`](docs/BIBLE.md)** (1 à 8 joueurs,
+> 5 quartiers, 6 créatures…). Ce cahier des charges d'origine reste utile pour les 4 piliers et les
+> détails ; en cas de désaccord, la bible gagne.
+
 Oct 5, 2026 · @Elisa
 
 > **Changement de direction (5 oct. 2026)** : on abandonne la 2D vue du dessus (Phaser) pour de la
